@@ -1,3 +1,6 @@
+/* Import Trix Editor CSS */
+@import "trix/dist/trix";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

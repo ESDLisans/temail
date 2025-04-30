@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Page extends Model
 {
     use HasFactory;
-    
+
     /**
      * The attributes that are mass assignable.
      *
@@ -18,24 +18,26 @@ class Page extends Model
         'title',
         'slug',
         'content',
+        'meta_title',
         'meta_description',
-        'meta_keywords',
-        'is_published',
+        'is_active',
     ];
-    
+
     /**
      * The attributes that should be cast.
      *
      * @var array<string, string>
      */
     protected $casts = [
-        'is_published' => 'boolean',
+        'is_active' => 'boolean',
     ];
-    
+
     /**
      * Get the route key for the model.
+     *
+     * @return string
      */
-    public function getRouteKeyName(): string
+    public function getRouteKeyName()
     {
         return 'slug';
     }

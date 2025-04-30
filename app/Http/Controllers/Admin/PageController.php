@@ -6,21 +6,20 @@ use App\Http\Controllers\Controller;
 use App\Models\Page;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use Illuminate\Validation\Rule;
 
 class PageController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display a listing of the pages.
      */
     public function index()
     {
-        $pages = Page::all();
+        $pages = Page::orderBy('title')->get();
         return view('admin.pages.index', compact('pages'));
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Show the form for creating a new page.
      */
     public function create()
     {
@@ -28,7 +27,7 @@ class PageController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created page in database.
      */
     public function store(Request $request)
     {
@@ -36,24 +35,24 @@ class PageController extends Controller
             'title' => 'required|string|max:255',
             'slug' => 'nullable|string|max:255|unique:pages',
             'content' => 'required|string',
-            'meta_description' => 'nullable|string|max:255',
-            'meta_keywords' => 'nullable|string|max:255',
-            'is_published' => 'boolean',
+            'meta_title' => 'nullable|string|max:255',
+            'meta_description' => 'nullable|string',
+            'is_active' => 'boolean',
         ]);
-        
+
         // Generate slug if not provided
         if (empty($validated['slug'])) {
             $validated['slug'] = Str::slug($validated['title']);
         }
-        
-        $page = Page::create($validated);
-        
+
+        Page::create($validated);
+
         return redirect()->route('admin.pages.index')
-            ->with('success', 'Page created successfully');
+            ->with('success', 'Page created successfully.');
     }
 
     /**
-     * Display the specified resource.
+     * Display the specified page.
      */
     public function show(Page $page)
     {
@@ -61,7 +60,7 @@ class PageController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Show the form for editing the specified page.
      */
     public function edit(Page $page)
     {
@@ -69,43 +68,38 @@ class PageController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update the specified page in database.
      */
     public function update(Request $request, Page $page)
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'slug' => [
-                'nullable',
-                'string',
-                'max:255',
-                Rule::unique('pages')->ignore($page->id),
-            ],
+            'slug' => 'nullable|string|max:255|unique:pages,slug,' . $page->id,
             'content' => 'required|string',
-            'meta_description' => 'nullable|string|max:255',
-            'meta_keywords' => 'nullable|string|max:255',
-            'is_published' => 'boolean',
+            'meta_title' => 'nullable|string|max:255',
+            'meta_description' => 'nullable|string',
+            'is_active' => 'boolean',
         ]);
-        
+
         // Generate slug if not provided
         if (empty($validated['slug'])) {
             $validated['slug'] = Str::slug($validated['title']);
         }
-        
+
         $page->update($validated);
-        
+
         return redirect()->route('admin.pages.index')
-            ->with('success', 'Page updated successfully');
+            ->with('success', 'Page updated successfully.');
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the specified page from database.
      */
     public function destroy(Page $page)
     {
         $page->delete();
-        
+
         return redirect()->route('admin.pages.index')
-            ->with('success', 'Page deleted successfully');
+            ->with('success', 'Page deleted successfully.');
     }
 }

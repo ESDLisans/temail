@@ -4,10 +4,10 @@ use App\Http\Controllers\Admin\AdSlotController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DomainController;
-use App\Http\Controllers\Admin\PageController as AdminPageController;
+use App\Http\Controllers\Admin\PageController;
 use App\Http\Controllers\Admin\SiteSettingController;
 use App\Http\Controllers\Admin\SmtpSettingController;
-use App\Http\Controllers\PageController;
+use App\Http\Controllers\PageController as FrontendPageController;
 use App\Http\Controllers\TempMailController;
 use Illuminate\Support\Facades\Route;
 
@@ -31,6 +31,11 @@ Route::get('/message/{messageId}', [TempMailController::class, 'viewMessage'])->
 Route::post('/regenerate', [TempMailController::class, 'regenerate'])->name('regenerate');
 Route::get('/refresh-inbox', [TempMailController::class, 'refreshInbox'])->name('refresh.inbox');
 
+// Static Pages
+Route::get('/features', [FrontendPageController::class, 'features'])->name('features');
+Route::get('/faq', [FrontendPageController::class, 'faq'])->name('faq');
+Route::get('/contact', [FrontendPageController::class, 'contact'])->name('contact');
+
 // Email Generation and Deletion Routes
 Route::post('/generate-email', [TempMailController::class, 'regenerate'])->name('generate.email');
 Route::post('/delete-email', [TempMailController::class, 'deleteEmail'])->name('delete.email');
@@ -42,9 +47,6 @@ Route::post('/favorite/{id}', [TempMailController::class, 'toggleFavorite'])->na
 
 // Add register route reference to prevent errors
 Route::redirect('/register', '/admin/login')->name('register');
-
-// Static Pages
-Route::get('/{slug}', [PageController::class, 'show'])->name('page.show');
 
 // Admin Routes
 Route::prefix('admin')->name('admin.')->group(function () {
@@ -71,7 +73,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::resource('ad-slots', AdSlotController::class);
         
         // Pages Management
-        Route::resource('pages', AdminPageController::class);
+        Route::resource('pages', PageController::class);
         
         // Site Settings
         Route::get('/site-settings', [SiteSettingController::class, 'index'])->name('site-settings.index');

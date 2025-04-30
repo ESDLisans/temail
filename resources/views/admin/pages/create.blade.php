@@ -1,103 +1,112 @@
 @extends('layouts.admin')
 
-@section('content')
-    <div class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-semibold text-gray-900">Create Page</h1>
-        <a href="{{ route('admin.pages.index') }}" class="px-4 py-2 bg-gray-600 text-white text-sm font-medium rounded-md hover:bg-gray-700">
-            Back to Pages
-        </a>
-    </div>
+@section('title', 'Create Page')
 
-    <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-        <div class="px-4 py-5 sm:p-6">
+@section('content')
+<div class="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
+    
+    <!-- Page header -->
+    <div class="mb-8">
+        <h1 class="text-2xl md:text-3xl font-bold">Create Page</h1>
+    </div>
+    
+    <!-- Form -->
+    <div class="bg-white dark:bg-slate-800 shadow-lg rounded-sm border border-slate-200 dark:border-slate-700 mb-8">
+        <div class="p-6">
             <form action="{{ route('admin.pages.store') }}" method="POST">
                 @csrf
                 
-                <div class="grid grid-cols-1 gap-6">
+                <div class="space-y-6">
+                    <!-- Title -->
                     <div>
-                        <label for="title" class="block text-sm font-medium text-gray-700">Title</label>
-                        <input type="text" name="title" id="title" value="{{ old('title') }}" required
-                            class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" 
-                            placeholder="Page Title">
+                        <label for="title" class="block text-sm font-medium mb-1">Title <span class="text-rose-500">*</span></label>
+                        <input id="title" name="title" class="form-input w-full" type="text" value="{{ old('title') }}" required />
+                        @error('title')
+                            <p class="text-xs text-rose-500 mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
                     
+                    <!-- Slug -->
                     <div>
-                        <label for="slug" class="block text-sm font-medium text-gray-700">Slug</label>
-                        <div class="mt-1 flex rounded-md shadow-sm">
-                            <span class="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 sm:text-sm">
-                                /
-                            </span>
-                            <input type="text" name="slug" id="slug" value="{{ old('slug') }}"
-                                class="focus:ring-indigo-500 focus:border-indigo-500 flex-1 block w-full rounded-none rounded-r-md sm:text-sm border-gray-300" 
-                                placeholder="page-slug">
-                        </div>
-                        <p class="mt-1 text-sm text-gray-500">
-                            Leave empty to automatically generate from title
-                        </p>
+                        <label for="slug" class="block text-sm font-medium mb-1">Slug</label>
+                        <input id="slug" name="slug" class="form-input w-full" type="text" value="{{ old('slug') }}" placeholder="Leave empty to generate automatically" />
+                        <p class="text-xs text-slate-500 mt-1">URL-friendly name (e.g., "my-page-title")</p>
+                        @error('slug')
+                            <p class="text-xs text-rose-500 mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
                     
+                    <!-- Meta Title -->
                     <div>
-                        <label for="content" class="block text-sm font-medium text-gray-700">Content</label>
-                        <textarea name="content" id="content" rows="15" required
-                            class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">{{ old('content') }}</textarea>
+                        <label for="meta_title" class="block text-sm font-medium mb-1">Meta Title</label>
+                        <input id="meta_title" name="meta_title" class="form-input w-full" type="text" value="{{ old('meta_title') }}" />
+                        <p class="text-xs text-slate-500 mt-1">SEO title for search engines (leave empty to use the page title)</p>
+                        @error('meta_title')
+                            <p class="text-xs text-rose-500 mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
                     
+                    <!-- Meta Description -->
                     <div>
-                        <label for="meta_description" class="block text-sm font-medium text-gray-700">Meta Description</label>
-                        <textarea name="meta_description" id="meta_description" rows="2"
-                            class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-                            placeholder="Brief description for search engines">{{ old('meta_description') }}</textarea>
+                        <label for="meta_description" class="block text-sm font-medium mb-1">Meta Description</label>
+                        <textarea id="meta_description" name="meta_description" class="form-textarea w-full" rows="3">{{ old('meta_description') }}</textarea>
+                        <p class="text-xs text-slate-500 mt-1">Short description for search engine results (150-160 characters)</p>
+                        @error('meta_description')
+                            <p class="text-xs text-rose-500 mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
                     
+                    <!-- Content -->
                     <div>
-                        <label for="meta_keywords" class="block text-sm font-medium text-gray-700">Meta Keywords</label>
-                        <input type="text" name="meta_keywords" id="meta_keywords" value="{{ old('meta_keywords') }}"
-                            class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" 
-                            placeholder="keyword1, keyword2, keyword3">
+                        <label for="content" class="block text-sm font-medium mb-1">Content <span class="text-rose-500">*</span></label>
+                        <input id="content" type="hidden" name="content" value="{{ old('content') }}">
+                        <trix-editor input="content" class="form-input trix-content w-full"></trix-editor>
+                        @error('content')
+                            <p class="text-xs text-rose-500 mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
                     
+                    <!-- Status -->
                     <div>
-                        <div class="flex items-start">
-                            <div class="flex items-center h-5">
-                                <input id="is_published" name="is_published" type="checkbox" value="1" 
-                                    {{ old('is_published', '1') == '1' ? 'checked' : '' }}
-                                    class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded">
-                            </div>
-                            <div class="ml-3 text-sm">
-                                <label for="is_published" class="font-medium text-gray-700">Published</label>
-                                <p class="text-gray-500">Make this page visible to users</p>
-                            </div>
-                        </div>
+                        <label class="flex items-center">
+                            <input type="hidden" name="is_active" value="0" />
+                            <input type="checkbox" name="is_active" class="form-checkbox" value="1" {{ old('is_active', 1) ? 'checked' : '' }} />
+                            <span class="text-sm ml-2">Publish page (make active)</span>
+                        </label>
                     </div>
-                </div>
-
-                <div class="mt-6">
-                    <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                        Create Page
-                    </button>
+                    
+                    <!-- Submit buttons -->
+                    <div class="flex items-center justify-end space-x-3">
+                        <a href="{{ route('admin.pages.index') }}" class="btn border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-600">Cancel</a>
+                        <button type="submit" class="btn bg-indigo-500 hover:bg-indigo-600 text-white">Create Page</button>
+                    </div>
                 </div>
             </form>
         </div>
     </div>
+</div>
 @endsection
 
 @push('scripts')
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const titleInput = document.getElementById('title');
-        const slugInput = document.getElementById('slug');
-        
-        titleInput.addEventListener('input', function() {
-            if (!slugInput.value) {
-                const slug = titleInput.value
-                    .toLowerCase()
-                    .replace(/[^\w\s-]/g, '')
-                    .replace(/\s+/g, '-')
-                    .replace(/--+/g, '-')
-                    .trim();
-                slugInput.value = slug;
-            }
-        });
+document.addEventListener('DOMContentLoaded', function() {
+    // Auto-generate slug from title
+    const titleInput = document.getElementById('title');
+    const slugInput = document.getElementById('slug');
+    
+    titleInput.addEventListener('blur', function() {
+        if (slugInput.value === '') {
+            // Simple slug generation
+            const slug = titleInput.value
+                .toLowerCase()
+                .replace(/[^\w\s-]/g, '')  // Remove special chars
+                .replace(/\s+/g, '-')     // Replace spaces with dashes
+                .replace(/-+/g, '-')      // Replace multiple dashes with single dash
+                .trim();                   // Trim whitespace
+            
+            slugInput.value = slug;
+        }
     });
+});
 </script>
 @endpush 
