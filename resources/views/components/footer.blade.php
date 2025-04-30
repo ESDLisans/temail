@@ -11,7 +11,7 @@
                     </span>
                 </div>
                 <p class="text-sm text-slate-500 dark:text-slate-400">
-                    Secure, temporary email addresses for your privacy needs. No registration required.
+                    {!! \App\Models\SiteSetting::get('footer_about', 'Secure, temporary email addresses for your privacy needs. No registration required.') !!}
                 </p>
                 <div class="flex space-x-3">
                     <button type="button" class="inline-flex items-center justify-center whitespace-nowrap rounded-full text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 w-8 rounded-full">
@@ -109,12 +109,12 @@
         </div>
 
         <div class="border-t border-slate-200 dark:border-slate-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
-            <p class="text-xs text-slate-500 dark:text-slate-400">© {{ date('Y') }} TempMail. All rights reserved.</p>
+            <p class="text-xs text-slate-500 dark:text-slate-400">{!! \App\Models\SiteSetting::get('footer_copyright', '© ' . date('Y') . ' TempMail. All rights reserved.') !!}</p>
 
             <div class="flex items-center space-x-4 mt-4 md:mt-0">
                 <div class="flex items-center text-xs text-slate-500 dark:text-slate-400">
                     <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-1 dark:stroke-white"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-                    <span>contact@tempmail.io</span>
+                    <span>{!! \App\Models\SiteSetting::get('footer_contact_email', 'contact@tempmail.io') !!}</span>
                 </div>
                 <div class="flex items-center text-xs text-slate-500 dark:text-slate-400">
                     <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-1 dark:stroke-white"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/></svg>

@@ -29,7 +29,7 @@
             </div>
             <div class="bg-gray-50 px-4 py-4 sm:px-6">
                 <div class="text-sm">
-                    <span class="font-medium text-gray-500">Auto-expire after 15 min</span>
+                    <span class="font-medium text-gray-500">Auto-expire after 10 hours</span>
                 </div>
             </div>
         </div>
@@ -102,6 +102,79 @@
                         @endforelse
                     </tbody>
                 </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white shadow overflow-hidden sm:rounded-lg mb-8">
+        <div class="px-4 py-5 sm:px-6">
+            <h3 class="text-lg leading-6 font-medium text-gray-900">
+                Installation Instructions
+            </h3>
+            <p class="mt-1 max-w-2xl text-sm text-gray-500">
+                Follow these steps to properly set up TempMail on your server.
+            </p>
+        </div>
+        <div class="border-t border-gray-200 px-4 py-5 sm:px-6">
+            <div class="space-y-6">
+                <div>
+                    <h4 class="text-md font-medium text-gray-900">Server Requirements</h4>
+                    <ul class="mt-2 list-disc pl-5 text-sm text-gray-600 space-y-1">
+                        <li>PHP 8.2 or higher</li>
+                        <li>MySQL 5.7+ or MariaDB 10.3+</li>
+                        <li>Composer 2.0+</li>
+                        <li>PHP extensions: BCMath, Ctype, Fileinfo, JSON, Mbstring, OpenSSL, PDO, Tokenizer, XML, IMAP</li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-md font-medium text-gray-900">Environment Setup</h4>
+                    <ol class="mt-2 list-decimal pl-5 text-sm text-gray-600 space-y-1">
+                        <li>Configure your <code class="bg-gray-100 px-1 py-0.5 rounded">.env</code> file with proper database credentials</li>
+                        <li>Set <code class="bg-gray-100 px-1 py-0.5 rounded">QUEUE_CONNECTION=database</code> for email processing</li>
+                        <li>Configure mail settings for proper notification delivery</li>
+                    </ol>
+                </div>
+
+                <div>
+                    <h4 class="text-md font-medium text-gray-900">cPanel Configuration</h4>
+                    <p class="mt-2 text-sm text-gray-600">
+                        If you're using cPanel, set up the following:
+                    </p>
+                    <ol class="mt-2 list-decimal pl-5 text-sm text-gray-600 space-y-1">
+                        <li>Create a dedicated MySQL database and user for TempMail</li>
+                        <li>Set up proper permissions on the storage directory: <code class="bg-gray-100 px-1 py-0.5 rounded">chmod -R 755 storage bootstrap/cache</code></li>
+                        <li>Configure an SSL certificate for your domain</li>
+                        <li>Set the document root to the <code class="bg-gray-100 px-1 py-0.5 rounded">public</code> folder of your Laravel installation</li>
+                    </ol>
+                </div>
+
+                <div>
+                    <h4 class="text-md font-medium text-gray-900">Required Cron Jobs</h4>
+                    <p class="mt-2 text-sm text-gray-600">
+                        Add the following cron jobs to your cPanel or server:
+                    </p>
+                    <div class="mt-2 bg-gray-50 p-3 rounded-md border border-gray-200 text-sm font-mono overflow-x-auto">
+                        <p class="text-gray-700 mb-3">Main Laravel scheduler (runs all scheduled tasks):</p>
+                        <pre class="text-gray-600">* * * * * cd /path/to/your/project && php artisan schedule:run >> /dev/null 2>&1</pre>
+                        
+                        <p class="text-gray-700 mt-4 mb-3">Queue worker (processes email fetching in background):</p>
+                        <pre class="text-gray-600">* * * * * cd /path/to/your/project && php artisan queue:work --sleep=3 --tries=3 --max-time=3600 >> /dev/null 2>&1</pre>
+                    </div>
+                    <p class="mt-3 text-sm text-gray-600">
+                        <strong>Note:</strong> Replace <code class="bg-gray-100 px-1 py-0.5 rounded">/path/to/your/project</code> with the actual path to your TempMail installation.
+                    </p>
+                </div>
+
+                <div>
+                    <h4 class="text-md font-medium text-gray-900">Important Commands</h4>
+                    <ul class="mt-2 list-disc pl-5 text-sm text-gray-600 space-y-1">
+                        <li>Run migrations: <code class="bg-gray-100 px-1 py-0.5 rounded">php artisan migrate</code></li>
+                        <li>Clear cache: <code class="bg-gray-100 px-1 py-0.5 rounded">php artisan optimize:clear</code></li>
+                        <li>Check email fetching: <code class="bg-gray-100 px-1 py-0.5 rounded">php artisan emails:fetch</code></li>
+                        <li>Manual cleanup: <code class="bg-gray-100 px-1 py-0.5 rounded">php artisan emails:cleanup</code></li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>

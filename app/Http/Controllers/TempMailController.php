@@ -134,10 +134,14 @@ class TempMailController extends Controller
         $messages = EmailMessage::where('temp_email_id', $email->id)
             ->orderBy('received_at', 'desc')
             ->get();
+        
+        // Calculate time left until expiration in seconds
+        $timeLeft = max(0, now()->diffInSeconds($email->expires_at));
             
         return response()->json([
             'success' => true,
             'messages' => $messages,
+            'timeLeft' => $timeLeft,
         ]);
     }
     
@@ -202,7 +206,7 @@ class TempMailController extends Controller
             'email' => $username . '@' . $domain->name,
             'local_part' => $username,
             'domain_id' => $domain->id,
-            'expires_at' => Carbon::now()->addMinutes(15),
+            'expires_at' => Carbon::now()->addHours(10),
         ]);
         
         // Set cookie

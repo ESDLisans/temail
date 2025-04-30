@@ -4,8 +4,34 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-
-    <title>TempMail - Temporary Email Service</title>
+    
+    <!-- SEO Meta Tags -->
+    <title>{{ \App\Models\SiteSetting::get('site_title', 'TempMail - Free Temporary Disposable Email Service') }}</title>
+    <meta name="description" content="{{ \App\Models\SiteSetting::get('site_description', 'Create temporary, disposable email addresses to protect your privacy from spam and unwanted emails. Our free service auto-deletes emails after 10 hours.') }}">
+    <meta name="keywords" content="{{ \App\Models\SiteSetting::get('site_keywords', 'temporary email, disposable email, temp mail, fake email, anonymous email, email privacy, anti-spam') }}">
+    <meta name="author" content="TempMail">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ url('/') }}">
+    <meta property="og:title" content="{{ \App\Models\SiteSetting::get('og_title', 'TempMail - Free Temporary Disposable Email Service') }}">
+    <meta property="og:description" content="{{ \App\Models\SiteSetting::get('og_description', 'Create temporary, disposable email addresses to protect your privacy from spam and unwanted emails.') }}">
+    <meta property="og:image" content="{{ \App\Models\SiteSetting::get('og_image') ? asset(\App\Models\SiteSetting::get('og_image')) : asset('img/tempmail-social.jpg') }}">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="{{ url('/') }}">
+    <meta property="twitter:title" content="{{ \App\Models\SiteSetting::get('og_title', 'TempMail - Free Temporary Disposable Email Service') }}">
+    <meta property="twitter:description" content="{{ \App\Models\SiteSetting::get('og_description', 'Create temporary, disposable email addresses to protect your privacy from spam and unwanted emails.') }}">
+    <meta property="twitter:image" content="{{ \App\Models\SiteSetting::get('og_image') ? asset(\App\Models\SiteSetting::get('og_image')) : asset('img/tempmail-social.jpg') }}">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="{{ url('/') }}">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ \App\Models\SiteSetting::get('site_favicon') ? asset(\App\Models\SiteSetting::get('site_favicon')) : asset('favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ \App\Models\SiteSetting::get('site_favicon') ? asset(\App\Models\SiteSetting::get('site_favicon')) : asset('favicon-16x16.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ \App\Models\SiteSetting::get('site_apple_touch_icon') ? asset(\App\Models\SiteSetting::get('site_apple_touch_icon')) : asset('apple-touch-icon.png') }}">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">

@@ -3,15 +3,47 @@
 @section('content')
     <x-temp-mail-header />
 
+    <!-- Structured data for SEO -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "TempMail",
+        "description": "Free temporary disposable email service to protect your privacy.",
+        "applicationCategory": "EmailApplication",
+        "operatingSystem": "All",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "featureList": "Anonymous Email, Email Protection, Anti-Spam, Temporary Address",
+        "keywords": "temporary email, disposable email, temp mail, fake email, anonymous email, email privacy"
+    }
+    </script>
+
     <div class="flex-grow">
         <!-- Top Ad Banner -->
-        <x-ad-banner format="horizontal" label="Top Banner" class="w-full max-w-7xl mx-auto my-4" />
+        @if(isset($ads['header']) && !empty($ads['header']->ad_code))
+            {!! $ads['header']->ad_code !!}
+        @else
+            <div class="hidden">
+                <x-ad-banner format="horizontal" label="Top Banner" class="w-full max-w-7xl mx-auto my-4" />
+            </div>
+            <div class="py-6"></div>
+        @endif
 
         <main class="container mx-auto px-4 py-4">
             <div class="flex flex-col lg:flex-row gap-4">
                 <!-- Left Ad Banner -->
                 <div class="hidden lg:block lg:w-[160px]">
-                    <x-ad-banner format="vertical" label="Left Banner" class="sticky top-24" />
+                    @if(isset($ads['sidebar']) && !empty($ads['sidebar']->ad_code))
+                        {!! $ads['sidebar']->ad_code !!}
+                    @else
+                        <div class="hidden">
+                            <x-ad-banner format="vertical" label="Left Banner" class="sticky top-24" />
+                        </div>
+                    @endif
                 </div>
 
                 <!-- Main Content -->
@@ -20,14 +52,14 @@
                         <div class="w-full shadow-md border-slate-200/80 dark:border-slate-800/80 overflow-hidden backdrop-blur-sm bg-white/80 dark:bg-slate-950/80 rounded-lg border">
                             <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-400 to-teal-500"></div>
                             <div class="pb-4 p-6">
-                                <h2 class="text-2xl font-medium flex items-center gap-2">
+                                <h1 class="text-2xl font-medium flex items-center gap-2">
                                     <div class="p-1.5 rounded-md bg-gradient-to-br from-emerald-500 to-teal-600 text-white">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mail dark:stroke-white"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
                                     </div>
                                     <span class="bg-gradient-to-r from-emerald-600 to-teal-600 dark:from-emerald-400 dark:to-teal-400 text-transparent bg-clip-text">
-                                        Temporary Email
+                                        Temporary Email Service
                                     </span>
-                                </h2>
+                                </h1>
                                 <p class="text-sm text-slate-600 dark:text-slate-300"><br>Generate a disposable email address for temporary use</p>
                             </div>
                             <div class="px-6">
@@ -57,9 +89,15 @@
                                 </div>
 
                                 <div class="flex items-center justify-between mb-6">
-                                    <div class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-full">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-emerald-500 dark:stroke-white"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                                        <span id="time-left">Auto-deletes in 10h 0m</span>
+                                    <div class="flex items-center gap-4">
+                                        <div class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-full">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-emerald-500 dark:stroke-white"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                            <span id="time-left">Auto-deletes in 10h 0m</span>
+                                        </div>
+                                        <div class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-full">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-500 dark:stroke-white"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path><path d="m12 6 4 4-4 4"></path><path d="M8 10h8"></path></svg>
+                                            <span id="refresh-countdown">Auto-refresh in 10s</span>
+                                        </div>
                                     </div>
                                     <button id="refresh-inbox-btn" type="button" class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-emerald-50 hover:text-emerald-600 dark:hover:bg-emerald-950 dark:hover:text-emerald-400 h-9 px-3 gap-1 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-refresh-cw dark:stroke-white"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M3 21v-5h5"/></svg>
@@ -105,12 +143,24 @@
 
                 <!-- Right Ad Banner -->
                 <div class="hidden lg:block lg:w-[160px]">
-                    <x-ad-banner format="vertical" label="Right Banner" class="sticky top-24" />
+                    @if(isset($ads['sidebar']) && !empty($ads['sidebar']->ad_code))
+                        {!! $ads['sidebar']->ad_code !!}
+                    @else
+                        <div class="hidden">
+                            <x-ad-banner format="vertical" label="Right Banner" class="sticky top-24" />
+                        </div>
+                    @endif
                 </div>
             </div>
 
             <!-- Bottom Ad Banner -->
-            <x-ad-banner format="horizontal" label="Bottom Banner" class="w-full max-w-7xl mx-auto mt-4" />
+            @if(isset($ads['footer']) && !empty($ads['footer']->ad_code))
+                {!! $ads['footer']->ad_code !!}
+            @else
+                <div class="hidden">
+                    <x-ad-banner format="horizontal" label="Bottom Banner" class="w-full max-w-7xl mx-auto mt-4" />
+                </div>
+            @endif
         </main>
     </div>
 
@@ -190,14 +240,100 @@
             // Time left calculation
             let timeLeft = {{ $timeLeft }};
             
-            function updateTimeLeft() {
-                timeLeft = Math.max(0, timeLeft - 60);
+            // Sayacı ilk çalıştırma anında hemen güncelle
+            function updateTimeLeftDisplay() {
                 const hours = Math.floor(timeLeft / 3600);
                 const minutes = Math.floor((timeLeft % 3600) / 60);
                 timeLeftEl.textContent = `Auto-deletes in ${hours}h ${minutes}m`;
             }
             
+            function updateTimeLeft() {
+                timeLeft = Math.max(0, timeLeft - 60);
+                updateTimeLeftDisplay();
+            }
+            
+            // Sayfa yüklendiğinde sayacı bir kez göster
+            updateTimeLeftDisplay();
+            
+            // Her dakika sayacı güncelle
             setInterval(updateTimeLeft, 60000);
+            
+            // Refresh countdown timer
+            const refreshCountdownEl = document.getElementById('refresh-countdown');
+            let refreshCountdown = 10; // Start from 10 seconds
+            
+            function updateRefreshCountdown() {
+                refreshCountdown--;
+                refreshCountdownEl.textContent = `Auto-refresh in ${refreshCountdown}s`;
+                
+                if (refreshCountdown <= 0) {
+                    // Reset countdown
+                    refreshCountdown = 10;
+                    
+                    // Trigger inbox refresh
+                    refreshInbox();
+                }
+            }
+            
+            // Start the countdown timer
+            const refreshInterval = setInterval(updateRefreshCountdown, 1000);
+            
+            // Function to refresh inbox
+            function refreshInbox(event) {
+                // Add spinning animation to the icon
+                refreshInboxBtn.querySelector('svg').classList.add('animate-spin');
+                
+                fetch('{{ route("refresh.inbox") }}', {
+                    method: 'GET',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Update time left from server response
+                        if (data.timeLeft !== undefined) {
+                            timeLeft = data.timeLeft;
+                            updateTimeLeft(); // Update timer immediately
+                        }
+                        
+                        // Update the email list with new messages
+                        if (data.messages) {
+                            // Get the active tab
+                            const activeTab = document.querySelector('[x-data]').__x.$data.activeTab;
+                            
+                            // Force page reload to refresh the email lists
+                            // This is a temporary solution until we implement proper DOM updates
+                            window.location.reload();
+                            
+                            // Only show toast when manually refreshed
+                            if (event && event.type === 'click') {
+                                showToast('Inbox refreshed successfully');
+                            } else {
+                                console.log('Auto-refreshed inbox at ' + new Date().toLocaleTimeString());
+                            }
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error refreshing inbox:', error);
+                })
+                .finally(() => {
+                    setTimeout(() => {
+                        refreshInboxBtn.querySelector('svg').classList.remove('animate-spin');
+                    }, 800);
+                });
+            }
+            
+            // Update the refresh inbox button to use the refreshInbox function
+            refreshInboxBtn.addEventListener('click', function(event) {
+                refreshInbox(event);
+                
+                // Reset the countdown timer after manual refresh
+                refreshCountdown = 10;
+                refreshCountdownEl.textContent = `Auto-refresh in ${refreshCountdown}s`;
+            });
             
             // Copy email function
             copyBtn.addEventListener('click', function() {
@@ -253,38 +389,6 @@
                     refreshDialog.classList.add('hidden');
                     setTimeout(() => {
                         refreshIcon.classList.remove('animate-spin');
-                    }, 800);
-                });
-            });
-            
-            // Refresh inbox
-            refreshInboxBtn.addEventListener('click', function() {
-                this.querySelector('svg').classList.add('animate-spin');
-                
-                // Here you would typically make an AJAX request to refresh the inbox
-                fetch('{{ route("refresh.inbox") }}', {
-                    method: 'GET',
-                    headers: {
-                        'X-CSRF-TOKEN': csrfToken
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        // In a real app, you would update the inbox here
-                        // For now, just show a toast
-                        showToast('Inbox refreshed successfully');
-                        
-                        // Reload the page to show new messages
-                        window.location.reload();
-                    }
-                })
-                .catch(error => {
-                    showToast('Failed to refresh inbox');
-                })
-                .finally(() => {
-                    setTimeout(() => {
-                        this.querySelector('svg').classList.remove('animate-spin');
                     }, 800);
                 });
             });

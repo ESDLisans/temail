@@ -3,7 +3,18 @@
 <div class="flex flex-col space-y-6">
     <div class="relative">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500 dark:text-slate-400 dark:stroke-white"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-        <input id="search-emails" type="search" placeholder="Search emails" class="w-full rounded-md border bg-white pl-10 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent placeholder:text-slate-500 dark:placeholder:text-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 border-slate-200 dark:border-slate-800 dark:bg-slate-950 focus-visible:ring-emerald-500">
+        <input id="search-emails" type="text" placeholder="Search emails" class="w-full rounded-md border bg-white dark:text-white pl-10 pr-10 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent placeholder:text-slate-500 dark:placeholder:text-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 border-slate-200 dark:border-slate-800 dark:bg-slate-950 focus-visible:ring-emerald-500">
+        <button id="clear-search" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hidden">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            <span class="sr-only">Clear search</span>
+        </button>
+        <div id="search-status" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hidden animate-pulse">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+    </div>
+
+    <div id="search-results-info" class="text-xs text-slate-500 dark:text-white hidden">
+        Showing <span id="results-count">0</span> results for "<span id="search-term"></span>"
     </div>
 
     <div id="empty-state" class="{{ count($emails) > 0 ? 'hidden' : '' }} flex flex-col items-center justify-center space-y-3 rounded-md border border-dashed p-8 text-center animate-in fade-in-50 border-slate-200 dark:border-slate-800">
@@ -47,37 +58,118 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Email search functionality
     const searchInput = document.getElementById('search-emails');
+    const clearButton = document.getElementById('clear-search');
+    const searchStatus = document.getElementById('search-status');
+    const searchResultsInfo = document.getElementById('search-results-info');
+    const resultsCount = document.getElementById('results-count');
+    const searchTermDisplay = document.getElementById('search-term');
     const emailItems = document.querySelectorAll('.email-item');
+    const emptyState = document.getElementById('empty-state');
+    const emailList = document.getElementById('email-list');
+    
+    let searchTimeout;
     
     if (searchInput) {
+        // Show clear button when there's text in the search input
         searchInput.addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase();
-            
-            emailItems.forEach(item => {
-                const emailSubject = item.querySelector('h3').textContent.toLowerCase();
-                const emailFrom = item.querySelector('.text-slate-600, .dark\\:text-slate-300').textContent.toLowerCase();
-                const emailContent = item.querySelector('.text-slate-500, .dark\\:text-slate-400').textContent.toLowerCase();
+            if (this.value.length > 0) {
+                clearButton.classList.remove('hidden');
+                searchStatus.classList.remove('hidden');
                 
-                if (emailSubject.includes(searchTerm) || emailFrom.includes(searchTerm) || emailContent.includes(searchTerm)) {
-                    item.style.display = '';
-                } else {
-                    item.style.display = 'none';
+                // Clear any existing timeout
+                if (searchTimeout) {
+                    clearTimeout(searchTimeout);
                 }
-            });
-            
-            // Check if any emails are visible
-            const visibleEmails = document.querySelectorAll('.email-item[style="display: none;"]');
-            const emptyState = document.getElementById('empty-state');
-            const emailList = document.getElementById('email-list');
-            
-            if (visibleEmails.length === emailItems.length) {
-                emptyState.classList.remove('hidden');
-                emailList.classList.add('hidden');
+                
+                // Set a timeout for the search to avoid searching on every keystroke
+                searchTimeout = setTimeout(() => {
+                    performSearch(this.value);
+                }, 300); // 300ms delay for better performance
             } else {
-                emptyState.classList.add('hidden');
-                emailList.classList.remove('hidden');
+                clearButton.classList.add('hidden');
+                searchStatus.classList.add('hidden');
+                searchResultsInfo.classList.add('hidden');
+                resetSearch();
             }
         });
+        
+        // Clear search when clicking the clear button
+        clearButton.addEventListener('click', function() {
+            searchInput.value = '';
+            searchInput.focus();
+            clearButton.classList.add('hidden');
+            searchStatus.classList.add('hidden');
+            searchResultsInfo.classList.add('hidden');
+            resetSearch();
+        });
+        
+        // Clear search when pressing Escape
+        searchInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                if (this.value.length > 0) {
+                    this.value = '';
+                    clearButton.classList.add('hidden');
+                    searchStatus.classList.add('hidden');
+                    searchResultsInfo.classList.add('hidden');
+                    resetSearch();
+                }
+            }
+        });
+    }
+    
+    function performSearch(term) {
+        const searchTerm = term.toLowerCase();
+        let visibleCount = 0;
+        
+        emailItems.forEach(item => {
+            const emailSubject = item.querySelector('h3').textContent.toLowerCase();
+            const emailFrom = item.querySelector('.text-slate-600, .dark\\:text-slate-300').textContent.toLowerCase();
+            const emailContent = item.querySelector('.text-slate-500, .dark\\:text-slate-400').textContent.toLowerCase();
+            
+            if (emailSubject.includes(searchTerm) || emailFrom.includes(searchTerm) || emailContent.includes(searchTerm)) {
+                item.style.display = '';
+                visibleCount++;
+            } else {
+                item.style.display = 'none';
+            }
+        });
+        
+        // Update search results info
+        if (searchTerm.length > 0) {
+            resultsCount.textContent = visibleCount;
+            searchTermDisplay.textContent = term;
+            searchResultsInfo.classList.remove('hidden');
+        } else {
+            searchResultsInfo.classList.add('hidden');
+        }
+        
+        // Show/hide the empty state depending on results
+        if (visibleCount === 0) {
+            emptyState.classList.remove('hidden');
+            emailList.classList.add('hidden');
+        } else {
+            emptyState.classList.add('hidden');
+            emailList.classList.remove('hidden');
+        }
+        
+        // Hide search status after search is complete
+        searchStatus.classList.add('hidden');
+    }
+    
+    function resetSearch() {
+        // Show all email items
+        emailItems.forEach(item => {
+            item.style.display = '';
+        });
+        
+        // Show/hide the empty state depending on if there are emails
+        if (emailItems.length === 0) {
+            emptyState.classList.remove('hidden');
+            emailList.classList.add('hidden');
+        } else {
+            emptyState.classList.add('hidden');
+            emailList.classList.remove('hidden');
+        }
     }
     
     // Email selection functionality

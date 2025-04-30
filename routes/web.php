@@ -4,7 +4,10 @@ use App\Http\Controllers\Admin\AdSlotController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DomainController;
+use App\Http\Controllers\Admin\PageController as AdminPageController;
+use App\Http\Controllers\Admin\SiteSettingController;
 use App\Http\Controllers\Admin\SmtpSettingController;
+use App\Http\Controllers\PageController;
 use App\Http\Controllers\TempMailController;
 use Illuminate\Support\Facades\Route;
 
@@ -40,6 +43,9 @@ Route::post('/favorite/{id}', [TempMailController::class, 'toggleFavorite'])->na
 // Add register route reference to prevent errors
 Route::redirect('/register', '/admin/login')->name('register');
 
+// Static Pages
+Route::get('/{slug}', [PageController::class, 'show'])->name('page.show');
+
 // Admin Routes
 Route::prefix('admin')->name('admin.')->group(function () {
     // Auth Routes
@@ -63,5 +69,18 @@ Route::prefix('admin')->name('admin.')->group(function () {
         
         // Ad Slots
         Route::resource('ad-slots', AdSlotController::class);
+        
+        // Pages Management
+        Route::resource('pages', AdminPageController::class);
+        
+        // Site Settings
+        Route::get('/site-settings', [SiteSettingController::class, 'index'])->name('site-settings.index');
+        Route::get('/site-settings/{group}/edit', [SiteSettingController::class, 'edit'])->name('site-settings.edit');
+        Route::put('/site-settings/{group}', [SiteSettingController::class, 'update'])->name('site-settings.update');
+        Route::get('/site-settings/create-defaults', [SiteSettingController::class, 'createDefaults'])->name('site-settings.create-defaults');
     });
 });
+
+Route::get('/api-docs', function () {
+    return view('api-documentation');
+})->name('api.docs');
