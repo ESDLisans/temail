@@ -1,0 +1,18 @@
+{
+  "resources/css/admin-icons.css": {
+    "file": "assets/admin-icons-DcHsD-lv.css",
+    "src": "resources/css/admin-icons.css",
+    "isEntry": true
+  },
+  "resources/css/app.css": {
+    "file": "assets/app-CKiPGZqv.css",
+    "src": "resources/css/app.css",
+    "isEntry": true
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-Cspj2b33.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true
+  }
+}
