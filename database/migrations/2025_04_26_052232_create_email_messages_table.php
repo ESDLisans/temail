@@ -21,8 +21,13 @@ return new class extends Migration
             $table->text('body_text')->nullable();
             $table->json('headers')->nullable();
             $table->boolean('is_read')->default(false);
+            $table->boolean('is_starred')->default(false);
+            $table->foreignId('in_reply_to_id')->nullable()->references('id')->on('email_messages')->nullOnDelete();
             $table->timestamp('received_at');
             $table->timestamps();
+            
+            // Add index for faster lookups
+            $table->index('message_id');
         });
     }
 

@@ -117,6 +117,36 @@ class SiteSettingController extends Controller
     }
 
     /**
+     * Delete the image associated with a specific site setting.
+     */
+    public function deleteImage(string $settingKey)
+    {
+        $setting = SiteSetting::where('key', $settingKey)->first();
+
+        if (!$setting || $setting->type !== 'image') {
+            return back()->with('error', 'Setting not found or not an image type.');
+        }
+
+        if (!empty($setting->value)) {
+            // Delete the file from storage
+            if (Storage::disk('public')->exists($setting->value)) {
+                Storage::disk('public')->delete($setting->value);
+            }
+            
+            // Clear the value in the database
+            $setting->value = null;
+            $setting->save();
+
+            // Flush the cache
+            SiteSetting::flushCache();
+
+            return back()->with('success', 'Image deleted successfully.');
+        } else {
+            return back()->with('info', 'No image to delete.');
+        }
+    }
+
+    /**
      * Create default settings for a fresh installation.
      * 
      * @param bool $fromCli Whether this method is being called from CLI
@@ -164,10 +194,20 @@ class SiteSettingController extends Controller
                 'value' => null,
                 'group' => 'appearance',
                 'type' => 'image',
-                'label' => 'Site Logo',
-                'description' => 'Upload your site logo (recommended size: 200x50)',
+                'label' => 'Light Mode Logo',
+                'description' => 'Upload your site logo for light mode (recommended size: 200x50)',
                 'is_required' => false,
                 'order' => 1,
+            ],
+            [
+                'key' => 'site_logo_dark',
+                'value' => null,
+                'group' => 'appearance',
+                'type' => 'image',
+                'label' => 'Dark Mode Logo',
+                'description' => 'Upload your site logo for dark mode (optional, uses light logo if empty)',
+                'is_required' => false,
+                'order' => 1.5,
             ],
             [
                 'key' => 'site_favicon',
@@ -220,6 +260,145 @@ class SiteSettingController extends Controller
                 'description' => 'Description displayed when sharing on social media',
                 'is_required' => false,
                 'order' => 3,
+            ],
+            // Add App Links
+            [
+                'key' => 'app_store_url',
+                'value' => '#',
+                'group' => 'social',
+                'type' => 'url',
+                'label' => 'App Store URL',
+                'description' => 'Link to your application on the Apple App Store',
+                'is_required' => false,
+                'order' => 4,
+            ],
+            [
+                'key' => 'google_play_url',
+                'value' => '#',
+                'group' => 'social',
+                'type' => 'url',
+                'label' => 'Google Play URL',
+                'description' => 'Link to your application on the Google Play Store',
+                'is_required' => false,
+                'order' => 5,
+            ],
+            [
+                'key' => 'chrome_extension_url',
+                'value' => '#',
+                'group' => 'social',
+                'type' => 'url',
+                'label' => 'Chrome Extension URL',
+                'description' => 'Link to your Chrome browser extension',
+                'is_required' => false,
+                'order' => 6,
+            ],
+            
+            // SEO Settings
+            [
+                'key' => 'google_analytics_id',
+                'value' => '',
+                'group' => 'seo',
+                'type' => 'text',
+                'label' => 'Google Analytics ID',
+                'description' => 'Google Analytics tracking ID (e.g., G-XXXXXXXXXX)',
+                'is_required' => false,
+                'order' => 1,
+            ],
+            [
+                'key' => 'google_tag_manager_id',
+                'value' => '',
+                'group' => 'seo',
+                'type' => 'text',
+                'label' => 'Google Tag Manager ID',
+                'description' => 'Google Tag Manager container ID (e.g., GTM-XXXXXXX)',
+                'is_required' => false,
+                'order' => 2,
+            ],
+            [
+                'key' => 'google_search_console_verification',
+                'value' => '',
+                'group' => 'seo',
+                'type' => 'text',
+                'label' => 'Google Search Console Verification',
+                'description' => 'Google Search Console verification meta tag content',
+                'is_required' => false,
+                'order' => 3,
+            ],
+            [
+                'key' => 'bing_webmaster_verification',
+                'value' => '',
+                'group' => 'seo',
+                'type' => 'text',
+                'label' => 'Bing Webmaster Verification',
+                'description' => 'Bing Webmaster Tools verification meta tag content',
+                'is_required' => false,
+                'order' => 4,
+            ],
+            [
+                'key' => 'robots_txt',
+                'value' => "User-agent: *\nAllow: /\nSitemap: " . url('/sitemap.xml'),
+                'group' => 'seo',
+                'type' => 'textarea',
+                'label' => 'Robots.txt Content',
+                'description' => 'Content for robots.txt file',
+                'is_required' => false,
+                'order' => 5,
+            ],
+            [
+                'key' => 'structured_data_enabled',
+                'value' => '1',
+                'group' => 'seo',
+                'type' => 'boolean',
+                'label' => 'Enable Structured Data',
+                'description' => 'Enable JSON-LD structured data for better SEO',
+                'is_required' => false,
+                'order' => 6,
+            ],
+            [
+                'key' => 'sitemap_enabled',
+                'value' => '1',
+                'group' => 'seo',
+                'type' => 'boolean',
+                'label' => 'Enable XML Sitemap',
+                'description' => 'Automatically generate XML sitemap',
+                'is_required' => false,
+                'order' => 7,
+            ],
+            [
+                'key' => 'canonical_urls_enabled',
+                'value' => '1',
+                'group' => 'seo',
+                'type' => 'boolean',
+                'label' => 'Enable Canonical URLs',
+                'description' => 'Add canonical URLs to prevent duplicate content',
+                'is_required' => false,
+                'order' => 8,
+            ],
+            [
+                'key' => 'meta_robots',
+                'value' => 'index, follow',
+                'group' => 'seo',
+                'type' => 'select',
+                'label' => 'Meta Robots',
+                'description' => 'Default robots directive for search engines',
+                'options' => [
+                    'index, follow' => 'Index, Follow',
+                    'index, nofollow' => 'Index, No Follow',
+                    'noindex, follow' => 'No Index, Follow',
+                    'noindex, nofollow' => 'No Index, No Follow',
+                ],
+                'is_required' => false,
+                'order' => 9,
+            ],
+            [
+                'key' => 'hreflang_enabled',
+                'value' => '0',
+                'group' => 'seo',
+                'type' => 'boolean',
+                'label' => 'Enable Hreflang',
+                'description' => 'Enable hreflang tags for multi-language support',
+                'is_required' => false,
+                'order' => 10,
             ],
             
             // Footer Settings

@@ -21,9 +21,21 @@ class SiteSetting extends Model
         'value',
         'type',
         'group',
+        'label',
         'order',
-        'required',
-        'description'
+        'is_required',
+        'description',
+        'options'
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'is_required' => 'boolean',
+        'options' => 'array',
     ];
 
     /**

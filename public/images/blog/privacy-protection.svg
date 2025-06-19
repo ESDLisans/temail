@@ -1,0 +1,97 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1e293b;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0f172a;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="shield" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#10b981;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#059669;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  
+  <!-- Main Content -->
+  <g transform="translate(60, 80)">
+    <!-- Shield Icon -->
+    <g transform="translate(50, 50)">
+      <path d="M60 0 L120 30 L120 90 C120 120 90 150 60 150 C30 150 0 120 0 90 L0 30 Z" fill="url(#shield)" opacity="0.8"/>
+      <path d="M30 75 L55 95 L90 60" stroke="white" stroke-width="6" fill="none"/>
+      <circle cx="150" cy="40" r="12" fill="#ef4444"/>
+      <text x="175" y="48" fill="#ef4444" font-family="Arial, sans-serif" font-size="16" font-weight="bold">SECURE</text>
+    </g>
+    
+    <!-- Title -->
+    <text x="50" y="250" fill="white" font-family="Arial, sans-serif" font-size="46" font-weight="bold">
+      Protect Your Privacy
+    </text>
+    <text x="50" y="310" fill="url(#shield)" font-family="Arial, sans-serif" font-size="50" font-weight="bold">
+      with Disposable
+    </text>
+    <text x="50" y="370" fill="white" font-family="Arial, sans-serif" font-size="46" font-weight="bold">
+      Email Addresses
+    </text>
+    
+    <!-- Subtitle -->
+    <text x="50" y="430" fill="#94a3b8" font-family="Arial, sans-serif" font-size="24">
+      Complete Guide to Email Privacy and Security
+    </text>
+    
+    <!-- Features -->
+    <g transform="translate(50, 480)">
+      <circle cx="0" cy="0" r="4" fill="#10b981"/>
+      <text x="15" y="5" fill="#e2e8f0" font-family="Arial, sans-serif" font-size="18">Zero Data Retention</text>
+      
+      <circle cx="220" cy="0" r="4" fill="#10b981"/>
+      <text x="235" y="5" fill="#e2e8f0" font-family="Arial, sans-serif" font-size="18">Spam Protection</text>
+      
+      <circle cx="420" cy="0" r="4" fill="#10b981"/>
+      <text x="435" y="5" fill="#e2e8f0" font-family="Arial, sans-serif" font-size="18">Anonymous Access</text>
+    </g>
+  </g>
+  
+  <!-- Right Side Graphics -->
+  <g transform="translate(650, 120)">
+    <!-- Lock Icon -->
+    <rect x="40" y="60" width="80" height="60" rx="8" fill="#475569" stroke="#10b981" stroke-width="3"/>
+    <rect x="60" y="40" width="40" height="30" rx="20" fill="none" stroke="#10b981" stroke-width="4"/>
+    <circle cx="80" cy="90" r="8" fill="#10b981"/>
+    
+    <!-- Email Flow -->
+    <g transform="translate(200, 20)">
+      <!-- Original Email -->
+      <rect x="0" y="0" width="80" height="50" rx="6" fill="#ef4444" opacity="0.8"/>
+      <text x="40" y="30" fill="white" font-family="Arial, sans-serif" font-size="12" text-anchor="middle">Original</text>
+      
+      <!-- Arrow -->
+      <path d="M90 25 L130 25" stroke="#94a3b8" stroke-width="3" marker-end="url(#arrowhead)"/>
+      
+      <!-- Temp Email -->
+      <rect x="140" y="0" width="80" height="50" rx="6" fill="#10b981" opacity="0.8"/>
+      <text x="180" y="30" fill="white" font-family="Arial, sans-serif" font-size="12" text-anchor="middle">Temp Mail</text>
+      
+      <!-- Protection symbols -->
+      <g transform="translate(0, 80)">
+        <circle cx="40" cy="20" r="15" fill="#ef4444" opacity="0.3"/>
+        <path d="M30 20 L50 20 M40 10 L40 30" stroke="#ef4444" stroke-width="3"/>
+        
+        <circle cx="180" cy="20" r="15" fill="#10b981" opacity="0.3"/>
+        <path d="M170 20 L185 15 L190 25 Z" fill="#10b981"/>
+      </g>
+    </g>
+  </g>
+  
+  <!-- Arrow marker definition -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#94a3b8"/>
+    </marker>
+  </defs>
+  
+  <!-- Bottom Brand -->
+  <text x="60" y="580" fill="#64748b" font-family="Arial, sans-serif" font-size="16">
+    TempMail.org - Your Privacy Protection Partner
+  </text>
+</svg> 

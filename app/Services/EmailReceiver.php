@@ -96,8 +96,17 @@ class EmailReceiver
                 return;
             }
             
+            // Check for spam indicators
+            if ($this->isLikelySpam($mail)) {
+                Log::info("Detected potential spam email for: $recipientEmail, email ID: $mailId");
+                // You can decide to still save it but mark as spam, or just log the occurrence
+            }
+            
+            // Check if it's a reply to an existing message
+            $isReply = $this->isReplyToExistingMessage($mail, $tempEmail);
+            
             // Save the email message
-            $emailMessage = $this->saveEmailMessage($mail, $tempEmail);
+            $emailMessage = $this->saveEmailMessage($mail, $tempEmail, $isReply);
             
             // Process attachments if any
             if (!empty($mail->getAttachments())) {
@@ -107,9 +116,100 @@ class EmailReceiver
             // Delete the email from server after processing
             $mailbox->deleteMail($mailId);
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             Log::error("Error processing email ID $mailId: " . $e->getMessage());
+            Log::error($e->getTraceAsString());
         }
+    }
+    
+    /**
+     * Check if an email is likely to be spam.
+     */
+    private function isLikelySpam($mail): bool
+    {
+        $spamIndicators = 0;
+        $maxIndicators = 5;
+        
+        // Check for common spam words in subject
+        $spamWords = ['viagra', 'cialis', 'casino', 'lottery', 'winner', 'free money', 'bank account', 
+                      'password', 'credit card', 'investment', 'loan', 'bitcoin', 'crypto'];
+                      
+        foreach ($spamWords as $word) {
+            if (stripos($mail->subject, $word) !== false) {
+                $spamIndicators++;
+            }
+        }
+        
+        // Check for excessive exclamation marks in subject
+        if (substr_count($mail->subject, '!') > 3) {
+            $spamIndicators++;
+        }
+        
+        // Check for typical spam headers
+        $headers = (array)$mail->headers;
+        if (isset($headers['x-spam-flag']) && strtolower($headers['x-spam-flag']) === 'yes') {
+            $spamIndicators += 2;
+        }
+        
+        // Check for suspicious bulk mail headers
+        if (isset($headers['precedence']) && in_array(strtolower($headers['precedence']), ['bulk', 'junk'])) {
+            $spamIndicators++;
+        }
+        
+        return $spamIndicators >= 2; // If 2 or more indicators, consider it spam
+    }
+    
+    /**
+     * Determine if the email is a reply to an existing message.
+     */
+    private function isReplyToExistingMessage($mail, TemporaryEmail $tempEmail): ?int
+    {
+        // Check for In-Reply-To or References headers
+        $headers = (array)$mail->headers;
+        $messageIds = [];
+        
+        if (isset($headers['in-reply-to'])) {
+            $messageIds[] = $this->extractMessageId($headers['in-reply-to']);
+        }
+        
+        if (isset($headers['references'])) {
+            $references = explode(' ', $headers['references']);
+            foreach ($references as $ref) {
+                $messageIds[] = $this->extractMessageId($ref);
+            }
+        }
+        
+        // Remove empty entries
+        $messageIds = array_filter($messageIds);
+        
+        if (empty($messageIds)) {
+            return null;
+        }
+        
+        // Find if any of the message IDs match a stored email
+        foreach ($messageIds as $messageId) {
+            $originalMessage = \App\Models\EmailMessage::where('message_id', $messageId)
+                ->where('temp_email_id', $tempEmail->id)
+                ->first();
+                
+            if ($originalMessage) {
+                return $originalMessage->id;
+            }
+        }
+        
+        return null;
+    }
+    
+    /**
+     * Extract clean message ID from header.
+     */
+    private function extractMessageId(string $header): ?string
+    {
+        $matches = [];
+        if (preg_match('/<(.+?)>/', $header, $matches)) {
+            return $matches[1];
+        }
+        return null;
     }
     
     /**
@@ -118,12 +218,23 @@ class EmailReceiver
     private function extractRecipientEmail(object $headers): ?string
     {
         // Try to get from To, Cc, or Delivered-To headers
-        $possibleHeaders = ['to', 'delivered-to', 'x-delivered-to', 'cc'];
+        $possibleHeaders = ['to', 'delivered-to', 'x-delivered-to', 'cc', 'x-original-to', 'envelope-to', 'x-rcpt-to', 'x-forwarded-to'];
         
         foreach ($possibleHeaders as $header) {
             if (isset($headers->$header)) {
                 $matches = [];
                 if (preg_match('/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/', $headers->$header, $matches)) {
+                    return strtolower($matches[1]);
+                }
+            }
+        }
+        
+        // Fallback to check all headers if we can't find in standard headers
+        foreach ((array)$headers as $headerName => $headerValue) {
+            // Try to find any email address that might be the original recipient
+            if (is_string($headerValue)) {
+                $matches = [];
+                if (preg_match('/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/', $headerValue, $matches)) {
                     return strtolower($matches[1]);
                 }
             }
@@ -137,15 +248,37 @@ class EmailReceiver
      */
     private function findTemporaryEmail(string $email): ?TemporaryEmail
     {
-        return TemporaryEmail::where('email', strtolower($email))
+        // First try exact match
+        $tempEmail = TemporaryEmail::where('email', strtolower($email))
             ->where('expires_at', '>', Carbon::now())
             ->first();
+            
+        if ($tempEmail) {
+            return $tempEmail;
+        }
+        
+        // If no exact match, try to extract local part and domain
+        $parts = explode('@', strtolower($email));
+        if (count($parts) == 2) {
+            $localPart = $parts[0];
+            $domain = $parts[1];
+            
+            // Search by local part and domain
+            return TemporaryEmail::whereHas('domain', function ($query) use ($domain) {
+                    $query->where('name', $domain);
+                })
+                ->where('local_part', $localPart)
+                ->where('expires_at', '>', Carbon::now())
+                ->first();
+        }
+        
+        return null;
     }
     
     /**
      * Save an email message to the database.
      */
-    private function saveEmailMessage($mail, TemporaryEmail $tempEmail): EmailMessage
+    private function saveEmailMessage($mail, TemporaryEmail $tempEmail, ?int $replyToId = null): EmailMessage
     {
         return EmailMessage::create([
             'temp_email_id' => $tempEmail->id,
@@ -156,6 +289,8 @@ class EmailReceiver
             'body_text' => $mail->textPlain ?: null,
             'headers' => json_decode(json_encode($mail->headers), true),
             'is_read' => false,
+            'is_starred' => false,
+            'in_reply_to_id' => $replyToId,
             'received_at' => Carbon::createFromTimestamp($mail->date),
         ]);
     }

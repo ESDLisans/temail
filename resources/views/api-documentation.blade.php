@@ -1,299 +1,234 @@
 @extends('layouts.app')
 
 @section('content')
-    <x-temp-mail-header />
-
     <div class="container mx-auto px-4 py-8">
-        <div class="bg-white dark:bg-slate-950 shadow-md rounded-lg overflow-hidden border border-slate-200 dark:border-slate-800">
-            <div class="p-6">
-                <h1 class="text-2xl font-bold text-slate-900 dark:text-white mb-2">TempMail API Documentation</h1>
-                <p class="text-slate-600 dark:text-slate-400 mb-6">
-                    Access our temporary email service programmatically with these API endpoints.
+        <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-6">TempMail API Documentation</h1>
+        
+        <div class="mb-10">
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-200 mb-4">Overview</h2>
+            <p class="text-gray-700 dark:text-gray-300 mb-4">
+                The TempMail API allows you to programmatically manage temporary email addresses and incoming emails. 
+                All API endpoints follow RESTful principles and respond in JSON format.
+            </p>
+            
+            <div class="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 mb-6">
+                <h3 class="text-lg font-medium text-gray-800 dark:text-gray-200 mb-2">Base URL</h3>
+                <code class="block bg-gray-800 dark:bg-gray-900 text-green-400 p-3 rounded">{{ url('/api/v1') }}</code>
+            </div>
+            
+            <div class="bg-yellow-50 dark:bg-yellow-900/30 border-l-4 border-yellow-400 dark:border-yellow-500 p-4 mb-6">
+                <p class="text-yellow-800 dark:text-yellow-200">
+                    <strong>Note:</strong> API requests are subject to rate limits (30 requests/minute).
+                    Check the <code class="bg-yellow-100 dark:bg-yellow-900 px-1 py-0.5 rounded">X-RateLimit-Remaining</code> field in response headers to monitor your remaining requests.
                 </p>
-
-                <div class="border-t border-slate-200 dark:border-slate-800 -mx-6 px-6 py-4">
-                    <h2 class="text-xl font-semibold text-slate-900 dark:text-white mb-4">API Base URL</h2>
-                    <code class="block bg-slate-100 dark:bg-slate-800 p-3 rounded text-sm overflow-x-auto">
-                        {{ url('/api/v1') }}
-                    </code>
-                </div>
-
-                <div class="border-t border-slate-200 dark:border-slate-800 -mx-6 px-6 py-4">
-                    <h2 class="text-xl font-semibold text-slate-900 dark:text-white mb-4">Authentication</h2>
-                    <p class="text-slate-600 dark:text-slate-400 mb-4">
-                        Currently, the API does not require authentication. All endpoints accept query parameters to identify the temporary email.
-                    </p>
-                </div>
-
-                <div class="border-t border-slate-200 dark:border-slate-800 -mx-6 px-6 py-4">
-                    <h2 class="text-xl font-semibold text-slate-900 dark:text-white mb-4">API Endpoints</h2>
-
-                    <!-- Get Emails -->
-                    <div class="mb-8">
-                        <div class="flex items-center gap-2 mb-2">
-                            <span class="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs font-semibold">GET</span>
-                            <h3 class="text-lg font-medium text-slate-900 dark:text-white">/emails</h3>
-                        </div>
-                        <p class="text-slate-600 dark:text-slate-400 mb-3">
-                            Get all emails for a specified temporary email address.
-                        </p>
-                        <div class="mb-3">
-                            <h4 class="font-medium text-slate-900 dark:text-white mb-1">Query Parameters</h4>
-                            <ul class="list-disc ml-5 text-sm">
-                                <li class="text-slate-600 dark:text-slate-400 mb-1"><code>email</code> (required) - The temporary email address</li>
-                                <li class="text-slate-600 dark:text-slate-400 mb-1"><code>limit</code> (optional) - Number of emails per page (default: 20, max: 100)</li>
-                                <li class="text-slate-600 dark:text-slate-400"><code>page</code> (optional) - Page number (default: 1)</li>
-                            </ul>
-                        </div>
-                        <div class="mb-3">
-                            <h4 class="font-medium text-slate-900 dark:text-white mb-1">Example Request</h4>
-                            <code class="block bg-slate-100 dark:bg-slate-800 p-3 rounded text-sm overflow-x-auto">
-                                {{ url('/api/v1/emails?email=example@tempmail.com&limit=10&page=1') }}
-                            </code>
-                        </div>
-                    </div>
-
-                    <!-- Get One Message -->
-                    <div class="mb-8">
-                        <div class="flex items-center gap-2 mb-2">
-                            <span class="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs font-semibold">GET</span>
-                            <h3 class="text-lg font-medium text-slate-900 dark:text-white">/messages/{id}</h3>
-                        </div>
-                        <p class="text-slate-600 dark:text-slate-400 mb-3">
-                            Get a specific email message with its content and attachments.
-                        </p>
-                        <div class="mb-3">
-                            <h4 class="font-medium text-slate-900 dark:text-white mb-1">Path Parameters</h4>
-                            <ul class="list-disc ml-5 text-sm">
-                                <li class="text-slate-600 dark:text-slate-400 mb-1"><code>id</code> - The email message ID</li>
-                            </ul>
-                        </div>
-                        <div class="mb-3">
-                            <h4 class="font-medium text-slate-900 dark:text-white mb-1">Query Parameters</h4>
-                            <ul class="list-disc ml-5 text-sm">
-                                <li class="text-slate-600 dark:text-slate-400"><code>email</code> (required) - The temporary email address</li>
-                            </ul>
-                        </div>
-                        <div class="mb-3">
-                            <h4 class="font-medium text-slate-900 dark:text-white mb-1">Example Request</h4>
-                            <code class="block bg-slate-100 dark:bg-slate-800 p-3 rounded text-sm overflow-x-auto">
-                                {{ url('/api/v1/messages/123?email=example@tempmail.com') }}
-                            </code>
-                        </div>
-                    </div>
-
-                    <!-- Delete Message -->
-                    <div class="mb-8">
-                        <div class="flex items-center gap-2 mb-2">
-                            <span class="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs font-semibold">GET</span>
-                            <h3 class="text-lg font-medium text-slate-900 dark:text-white">/messages/{id}/delete</h3>
-                        </div>
-                        <p class="text-slate-600 dark:text-slate-400 mb-3">
-                            Delete a specific email message.
-                        </p>
-                        <div class="mb-3">
-                            <h4 class="font-medium text-slate-900 dark:text-white mb-1">Path Parameters</h4>
-                            <ul class="list-disc ml-5 text-sm">
-                                <li class="text-slate-600 dark:text-slate-400 mb-1"><code>id</code> - The email message ID</li>
-                            </ul>
-                        </div>
-                        <div class="mb-3">
-                            <h4 class="font-medium text-slate-900 dark:text-white mb-1">Query Parameters</h4>
-                            <ul class="list-disc ml-5 text-sm">
-                                <li class="text-slate-600 dark:text-slate-400"><code>email</code> (required) - The temporary email address</li>
-                            </ul>
-                        </div>
-                        <div class="mb-3">
-                            <h4 class="font-medium text-slate-900 dark:text-white mb-1">Example Request</h4>
-                            <code class="block bg-slate-100 dark:bg-slate-800 p-3 rounded text-sm overflow-x-auto">
-                                {{ url('/api/v1/messages/123/delete?email=example@tempmail.com') }}
-                            </code>
-                        </div>
-                    </div>
-
-                    <!-- Source Message -->
-                    <div class="mb-8">
-                        <div class="flex items-center gap-2 mb-2">
-                            <span class="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs font-semibold">GET</span>
-                            <h3 class="text-lg font-medium text-slate-900 dark:text-white">/messages/{id}/source</h3>
-                        </div>
-                        <p class="text-slate-600 dark:text-slate-400 mb-3">
-                            Get the source of an email message including headers and raw content.
-                        </p>
-                        <div class="mb-3">
-                            <h4 class="font-medium text-slate-900 dark:text-white mb-1">Path Parameters</h4>
-                            <ul class="list-disc ml-5 text-sm">
-                                <li class="text-slate-600 dark:text-slate-400 mb-1"><code>id</code> - The email message ID</li>
-                            </ul>
-                        </div>
-                        <div class="mb-3">
-                            <h4 class="font-medium text-slate-900 dark:text-white mb-1">Query Parameters</h4>
-                            <ul class="list-disc ml-5 text-sm">
-                                <li class="text-slate-600 dark:text-slate-400"><code>email</code> (required) - The temporary email address</li>
-                            </ul>
-                        </div>
-                        <div class="mb-3">
-                            <h4 class="font-medium text-slate-900 dark:text-white mb-1">Example Request</h4>
-                            <code class="block bg-slate-100 dark:bg-slate-800 p-3 rounded text-sm overflow-x-auto">
-                                {{ url('/api/v1/messages/123/source?email=example@tempmail.com') }}
-                            </code>
-                        </div>
-                    </div>
-
-                    <!-- Get Message Attachments -->
-                    <div class="mb-8">
-                        <div class="flex items-center gap-2 mb-2">
-                            <span class="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs font-semibold">GET</span>
-                            <h3 class="text-lg font-medium text-slate-900 dark:text-white">/messages/{id}/attachments</h3>
-                        </div>
-                        <p class="text-slate-600 dark:text-slate-400 mb-3">
-                            Get all attachments for a specific email message.
-                        </p>
-                        <div class="mb-3">
-                            <h4 class="font-medium text-slate-900 dark:text-white mb-1">Path Parameters</h4>
-                            <ul class="list-disc ml-5 text-sm">
-                                <li class="text-slate-600 dark:text-slate-400 mb-1"><code>id</code> - The email message ID</li>
-                            </ul>
-                        </div>
-                        <div class="mb-3">
-                            <h4 class="font-medium text-slate-900 dark:text-white mb-1">Query Parameters</h4>
-                            <ul class="list-disc ml-5 text-sm">
-                                <li class="text-slate-600 dark:text-slate-400"><code>email</code> (required) - The temporary email address</li>
-                            </ul>
-                        </div>
-                        <div class="mb-3">
-                            <h4 class="font-medium text-slate-900 dark:text-white mb-1">Example Request</h4>
-                            <code class="block bg-slate-100 dark:bg-slate-800 p-3 rounded text-sm overflow-x-auto">
-                                {{ url('/api/v1/messages/123/attachments?email=example@tempmail.com') }}
-                            </code>
-                        </div>
-                    </div>
-
-                    <!-- Get Message Attachments (Legacy) -->
-                    <div class="mb-8">
-                        <div class="flex items-center gap-2 mb-2">
-                            <span class="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs font-semibold">GET</span>
-                            <h3 class="text-lg font-medium text-slate-900 dark:text-white">/messages/{id}/attachments/legacy</h3>
-                        </div>
-                        <p class="text-slate-600 dark:text-slate-400 mb-3">
-                            Legacy endpoint for getting message attachments.
-                        </p>
-                        <div class="mb-3">
-                            <h4 class="font-medium text-slate-900 dark:text-white mb-1">Path Parameters</h4>
-                            <ul class="list-disc ml-5 text-sm">
-                                <li class="text-slate-600 dark:text-slate-400 mb-1"><code>id</code> - The email message ID</li>
-                            </ul>
-                        </div>
-                        <div class="mb-3">
-                            <h4 class="font-medium text-slate-900 dark:text-white mb-1">Query Parameters</h4>
-                            <ul class="list-disc ml-5 text-sm">
-                                <li class="text-slate-600 dark:text-slate-400"><code>email</code> (required) - The temporary email address</li>
-                            </ul>
-                        </div>
-                        <div class="mb-3">
-                            <h4 class="font-medium text-slate-900 dark:text-white mb-1">Example Request</h4>
-                            <code class="block bg-slate-100 dark:bg-slate-800 p-3 rounded text-sm overflow-x-auto">
-                                {{ url('/api/v1/messages/123/attachments/legacy?email=example@tempmail.com') }}
-                            </code>
-                        </div>
-                    </div>
-
-                    <!-- Get One Attachment -->
-                    <div class="mb-8">
-                        <div class="flex items-center gap-2 mb-2">
-                            <span class="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs font-semibold">GET</span>
-                            <h3 class="text-lg font-medium text-slate-900 dark:text-white">/attachments/{id}</h3>
-                        </div>
-                        <p class="text-slate-600 dark:text-slate-400 mb-3">
-                            Get a specific attachment file.
-                        </p>
-                        <div class="mb-3">
-                            <h4 class="font-medium text-slate-900 dark:text-white mb-1">Path Parameters</h4>
-                            <ul class="list-disc ml-5 text-sm">
-                                <li class="text-slate-600 dark:text-slate-400 mb-1"><code>id</code> - The attachment ID</li>
-                            </ul>
-                        </div>
-                        <div class="mb-3">
-                            <h4 class="font-medium text-slate-900 dark:text-white mb-1">Query Parameters</h4>
-                            <ul class="list-disc ml-5 text-sm">
-                                <li class="text-slate-600 dark:text-slate-400 mb-1"><code>email</code> (required) - The temporary email address</li>
-                                <li class="text-slate-600 dark:text-slate-400"><code>download</code> (optional) - Set to true to download the file instead of viewing it (default: false)</li>
-                            </ul>
-                        </div>
-                        <div class="mb-3">
-                            <h4 class="font-medium text-slate-900 dark:text-white mb-1">Example Request</h4>
-                            <code class="block bg-slate-100 dark:bg-slate-800 p-3 rounded text-sm overflow-x-auto">
-                                {{ url('/api/v1/attachments/123?email=example@tempmail.com&download=true') }}
-                            </code>
-                        </div>
-                    </div>
-
-                    <!-- Get Domains List -->
-                    <div class="mb-8">
-                        <div class="flex items-center gap-2 mb-2">
-                            <span class="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs font-semibold">GET</span>
-                            <h3 class="text-lg font-medium text-slate-900 dark:text-white">/domains</h3>
-                        </div>
-                        <p class="text-slate-600 dark:text-slate-400 mb-3">
-                            Get a list of all available domains for temporary email creation.
-                        </p>
-                        <div class="mb-3">
-                            <h4 class="font-medium text-slate-900 dark:text-white mb-1">Example Request</h4>
-                            <code class="block bg-slate-100 dark:bg-slate-800 p-3 rounded text-sm overflow-x-auto">
-                                {{ url('/api/v1/domains') }}
-                            </code>
-                        </div>
+            </div>
+        </div>
+        
+        <div class="mb-10">
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-200 mb-4">Endpoints</h2>
+            
+            <!-- Emails endpoint -->
+            <div class="border dark:border-gray-700 rounded-lg mb-6 overflow-hidden">
+                <div class="bg-blue-50 dark:bg-blue-900/30 px-6 py-4 border-b dark:border-gray-700">
+                    <h3 class="text-xl font-medium text-blue-800 dark:text-blue-300">Get Emails</h3>
+                    <div class="flex items-center mt-2">
+                        <span class="bg-green-500 dark:bg-green-600 text-white px-3 py-1 rounded-md text-sm mr-3">GET</span>
+                        <code class="text-blue-700 dark:text-blue-300">/emails?email={email}&limit={limit}&page={page}</code>
                     </div>
                 </div>
-
-                <div class="border-t border-slate-200 dark:border-slate-800 -mx-6 px-6 py-4">
-                    <h2 class="text-xl font-semibold text-slate-900 dark:text-white mb-4">Response Format</h2>
-                    <p class="text-slate-600 dark:text-slate-400 mb-3">
-                        All API responses are in JSON format with the following structure:
-                    </p>
-                    <pre class="bg-slate-100 dark:bg-slate-800 p-3 rounded text-sm overflow-x-auto mb-4">
-{
-    "success": true, // boolean indicating success or failure
-    "data": {        // present only for successful responses
-        // response data
-    },
-    "message": ""    // error message (present only for failures)
-}
-                    </pre>
+                <div class="p-6 bg-white dark:bg-gray-900">
+                    <h4 class="font-medium text-gray-800 dark:text-gray-200 mb-2">Description</h4>
+                    <p class="text-gray-700 dark:text-gray-300 mb-4">Get all emails for a specific temporary email address.</p>
+                    
+                    <h4 class="font-medium text-gray-800 dark:text-gray-200 mb-2">Parameters</h4>
+                    <div class="overflow-x-auto">
+                        <table class="w-full mb-4">
+                            <thead class="bg-gray-100 dark:bg-gray-800">
+                                <tr>
+                                    <th class="px-4 py-2 text-left text-gray-700 dark:text-gray-300">Parameter</th>
+                                    <th class="px-4 py-2 text-left text-gray-700 dark:text-gray-300">Type</th>
+                                    <th class="px-4 py-2 text-left text-gray-700 dark:text-gray-300">Required</th>
+                                    <th class="px-4 py-2 text-left text-gray-700 dark:text-gray-300">Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-t dark:border-gray-700">
+                                    <td class="px-4 py-2 text-gray-800 dark:text-gray-200">email</td>
+                                    <td class="px-4 py-2 text-gray-600 dark:text-gray-400">string</td>
+                                    <td class="px-4 py-2 text-gray-600 dark:text-gray-400">Yes</td>
+                                    <td class="px-4 py-2 text-gray-600 dark:text-gray-400">Temporary email address</td>
+                                </tr>
+                                <tr class="border-t dark:border-gray-700">
+                                    <td class="px-4 py-2 text-gray-800 dark:text-gray-200">limit</td>
+                                    <td class="px-4 py-2 text-gray-600 dark:text-gray-400">integer</td>
+                                    <td class="px-4 py-2 text-gray-600 dark:text-gray-400">No</td>
+                                    <td class="px-4 py-2 text-gray-600 dark:text-gray-400">Number of emails per page (default: 20, max: 100)</td>
+                                </tr>
+                                <tr class="border-t dark:border-gray-700">
+                                    <td class="px-4 py-2 text-gray-800 dark:text-gray-200">page</td>
+                                    <td class="px-4 py-2 text-gray-600 dark:text-gray-400">integer</td>
+                                    <td class="px-4 py-2 text-gray-600 dark:text-gray-400">No</td>
+                                    <td class="px-4 py-2 text-gray-600 dark:text-gray-400">Page number (default: 1)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <h4 class="font-medium text-gray-800 dark:text-gray-200 mb-2">Example Response</h4>
+                    <pre class="bg-gray-800 dark:bg-black text-green-400 p-4 rounded overflow-x-auto mb-4"><code>{
+    "success": true,
+    "data": {
+        "emails": [
+            {
+                "id": 123,
+                "temp_email_id": 456,
+                "message_id": "&lt;example123@mail.com&gt;",
+                "from": "sender@example.com",
+                "subject": "Test Email Subject",
+                "is_read": false,
+                "is_starred": false,
+                "received_at": "2023-04-28T14:22:33.000000Z"
+            }
+        ],
+        "pagination": {
+            "total": 5,
+            "per_page": 20,
+            "current_page": 1,
+            "last_page": 1
+        }
+    }
+}</code></pre>
                 </div>
-
-                <div class="border-t border-slate-200 dark:border-slate-800 -mx-6 px-6 py-4">
-                    <h2 class="text-xl font-semibold text-slate-900 dark:text-white mb-4">Error Codes</h2>
-                    <table class="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
-                        <thead>
-                            <tr>
-                                <th class="px-3 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Status Code</th>
-                                <th class="px-3 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Description</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-200 dark:divide-slate-800">
-                            <tr class="text-slate-600 dark:text-slate-400">
-                                <td class="px-3 py-3 text-sm">200</td>
-                                <td class="px-3 py-3 text-sm">Successful request</td>
-                            </tr>
-                            <tr class="text-slate-600 dark:text-slate-400">
-                                <td class="px-3 py-3 text-sm">400</td>
-                                <td class="px-3 py-3 text-sm">Bad request - validation error</td>
-                            </tr>
-                            <tr class="text-slate-600 dark:text-slate-400">
-                                <td class="px-3 py-3 text-sm">404</td>
-                                <td class="px-3 py-3 text-sm">Not found - email address, message, or attachment not found</td>
-                            </tr>
-                            <tr class="text-slate-600 dark:text-slate-400">
-                                <td class="px-3 py-3 text-sm">500</td>
-                                <td class="px-3 py-3 text-sm">Server error</td>
-                            </tr>
-                        </tbody>
-                    </table>
+            </div>
+            
+            <!-- Message endpoint -->
+            <div class="border dark:border-gray-700 rounded-lg mb-6 overflow-hidden">
+                <div class="bg-blue-50 dark:bg-blue-900/30 px-6 py-4 border-b dark:border-gray-700">
+                    <h3 class="text-xl font-medium text-blue-800 dark:text-blue-300">Get Email Details</h3>
+                    <div class="flex items-center mt-2">
+                        <span class="bg-green-500 dark:bg-green-600 text-white px-3 py-1 rounded-md text-sm mr-3">GET</span>
+                        <code class="text-blue-700 dark:text-blue-300">/messages/{id}?email={email}</code>
+                    </div>
+                </div>
+                <div class="p-6 bg-white dark:bg-gray-900">
+                    <h4 class="font-medium text-gray-800 dark:text-gray-200 mb-2">Description</h4>
+                    <p class="text-gray-700 dark:text-gray-300 mb-4">Get detailed content of a specific email message.</p>
+                    
+                    <h4 class="font-medium text-gray-800 dark:text-gray-200 mb-2">Parameters</h4>
+                    <div class="overflow-x-auto">
+                        <table class="w-full mb-4">
+                            <thead class="bg-gray-100 dark:bg-gray-800">
+                                <tr>
+                                    <th class="px-4 py-2 text-left text-gray-700 dark:text-gray-300">Parameter</th>
+                                    <th class="px-4 py-2 text-left text-gray-700 dark:text-gray-300">Type</th>
+                                    <th class="px-4 py-2 text-left text-gray-700 dark:text-gray-300">Required</th>
+                                    <th class="px-4 py-2 text-left text-gray-700 dark:text-gray-300">Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-t dark:border-gray-700">
+                                    <td class="px-4 py-2 text-gray-800 dark:text-gray-200">id</td>
+                                    <td class="px-4 py-2 text-gray-600 dark:text-gray-400">integer</td>
+                                    <td class="px-4 py-2 text-gray-600 dark:text-gray-400">Yes</td>
+                                    <td class="px-4 py-2 text-gray-600 dark:text-gray-400">Email message ID</td>
+                                </tr>
+                                <tr class="border-t dark:border-gray-700">
+                                    <td class="px-4 py-2 text-gray-800 dark:text-gray-200">email</td>
+                                    <td class="px-4 py-2 text-gray-600 dark:text-gray-400">string</td>
+                                    <td class="px-4 py-2 text-gray-600 dark:text-gray-400">Yes</td>
+                                    <td class="px-4 py-2 text-gray-600 dark:text-gray-400">Temporary email address</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Domains endpoint -->
+            <div class="border dark:border-gray-700 rounded-lg mb-6 overflow-hidden">
+                <div class="bg-blue-50 dark:bg-blue-900/30 px-6 py-4 border-b dark:border-gray-700">
+                    <h3 class="text-xl font-medium text-blue-800 dark:text-blue-300">Get Domains</h3>
+                    <div class="flex items-center mt-2">
+                        <span class="bg-green-500 dark:bg-green-600 text-white px-3 py-1 rounded-md text-sm mr-3">GET</span>
+                        <code class="text-blue-700 dark:text-blue-300">/domains</code>
+                    </div>
+                </div>
+                <div class="p-6 bg-white dark:bg-gray-900">
+                    <h4 class="font-medium text-gray-800 dark:text-gray-200 mb-2">Description</h4>
+                    <p class="text-gray-700 dark:text-gray-300 mb-4">Get a list of all available domains.</p>
+                    
+                    <h4 class="font-medium text-gray-800 dark:text-gray-200 mb-2">Example Response</h4>
+                    <pre class="bg-gray-800 dark:bg-black text-green-400 p-4 rounded overflow-x-auto"><code>{
+    "success": true,
+    "data": [
+        {
+            "id": 1,
+            "name": "tempmail.example.com"
+        },
+        {
+            "id": 2,
+            "name": "disposable.example.org"
+        }
+    ]
+}</code></pre>
                 </div>
             </div>
         </div>
+        
+        <div class="mb-10">
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-200 mb-4">Error Codes</h2>
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead class="bg-gray-100 dark:bg-gray-800">
+                        <tr>
+                            <th class="px-4 py-2 text-left text-gray-700 dark:text-gray-300">Status Code</th>
+                            <th class="px-4 py-2 text-left text-gray-700 dark:text-gray-300">Error Type</th>
+                            <th class="px-4 py-2 text-left text-gray-700 dark:text-gray-300">Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="border-t dark:border-gray-700">
+                            <td class="px-4 py-2 text-gray-800 dark:text-gray-200">400</td>
+                            <td class="px-4 py-2 text-gray-600 dark:text-gray-400">Bad Request</td>
+                            <td class="px-4 py-2 text-gray-600 dark:text-gray-400">Invalid request parameters</td>
+                        </tr>
+                        <tr class="border-t dark:border-gray-700">
+                            <td class="px-4 py-2 text-gray-800 dark:text-gray-200">404</td>
+                            <td class="px-4 py-2 text-gray-600 dark:text-gray-400">Not Found</td>
+                            <td class="px-4 py-2 text-gray-600 dark:text-gray-400">Email or message not found</td>
+                        </tr>
+                        <tr class="border-t dark:border-gray-700">
+                            <td class="px-4 py-2 text-gray-800 dark:text-gray-200">429</td>
+                            <td class="px-4 py-2 text-gray-600 dark:text-gray-400">Too Many Requests</td>
+                            <td class="px-4 py-2 text-gray-600 dark:text-gray-400">Request limit exceeded</td>
+                        </tr>
+                        <tr class="border-t dark:border-gray-700">
+                            <td class="px-4 py-2 text-gray-800 dark:text-gray-200">500</td>
+                            <td class="px-4 py-2 text-gray-600 dark:text-gray-400">Server Error</td>
+                            <td class="px-4 py-2 text-gray-600 dark:text-gray-400">Server error</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div>
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-200 mb-4">Example Usage (JavaScript)</h2>
+            <pre class="bg-gray-800 dark:bg-black text-green-400 p-4 rounded overflow-x-auto"><code>// Example of fetching emails
+async function getEmails(tempEmail) {
+    try {
+        const response = await fetch(`{{ url('/api/v1') }}/emails?email=${tempEmail}&limit=10`);
+        const data = await response.json();
+        
+        if (data.success) {
+            console.log('Emails:', data.data.emails);
+        } else {
+            console.error('Error:', data.message);
+        }
+    } catch (error) {
+        console.error('API error:', error);
+    }
+}</code></pre>
+        </div>
     </div>
-
-    <x-footer />
 @endsection 

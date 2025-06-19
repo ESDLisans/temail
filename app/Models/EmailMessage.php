@@ -26,6 +26,7 @@ class EmailMessage extends Model
         'headers',
         'is_read',
         'is_starred',
+        'in_reply_to_id',
         'received_at',
     ];
 
@@ -47,6 +48,22 @@ class EmailMessage extends Model
     public function temporaryEmail(): BelongsTo
     {
         return $this->belongsTo(TemporaryEmail::class, 'temp_email_id');
+    }
+
+    /**
+     * Get the parent message that this message is a reply to.
+     */
+    public function parentMessage(): BelongsTo
+    {
+        return $this->belongsTo(EmailMessage::class, 'in_reply_to_id');
+    }
+    
+    /**
+     * Get the replies to this message.
+     */
+    public function replies(): HasMany
+    {
+        return $this->hasMany(EmailMessage::class, 'in_reply_to_id');
     }
 
     /**

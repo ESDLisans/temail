@@ -21,3 +21,47 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
+
+# Custom files
+temp-mail.zip
+backup.sh
+deploy.sh
+DEPLOYMENT.md
+env.production.example
+
+# Logs
+storage/logs/*.log
+
+# Cache
+bootstrap/cache/*.php
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/views/*
+
+# Database
+*.sqlite
+*.sqlite3
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+*~
+
+# IDE files
+*.swp
+*.swo
+*~
+
+# Package files
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip

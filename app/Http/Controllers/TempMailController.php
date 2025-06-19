@@ -12,6 +12,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ForwardEmail;
+use Illuminate\Support\Facades\Log;
 
 class TempMailController extends Controller
 {
@@ -71,19 +74,26 @@ class TempMailController extends Controller
      */
     public function viewMessage(Request $request, int $messageId): View|JsonResponse
     {
-        $email = $this->getTemporaryEmail($request);
-        
-        if (!$email) {
-            return response()->json(['error' => 'No temporary email found'], 404);
-        }
-        
+        // First try to find the message
         $message = EmailMessage::where('id', $messageId)
-            ->where('temp_email_id', $email->id)
-            ->with('attachments')
+            ->with(['attachments', 'temporaryEmail'])
             ->first();
             
         if (!$message) {
-            return response()->json(['error' => 'Message not found'], 404);
+            abort(404, 'Message not found');
+        }
+        
+        $email = $message->temporaryEmail;
+        
+        // Check if email is expired
+        if ($email->isExpired()) {
+            abort(404, 'Email has expired');
+        }
+        
+        // Set cookie for this temporary email if not already set
+        $currentEmailId = $request->cookie('temp_email_id');
+        if ($currentEmailId != $email->id) {
+            Cookie::queue('temp_email_id', $email->id, 60); // 60 min
         }
         
         // Mark as read
@@ -111,8 +121,9 @@ class TempMailController extends Controller
         // Create new email
         $email = $this->createTemporaryEmail();
         
-        // Set cookie
+        // Set cookie and session
         Cookie::queue('temp_email_id', $email->id, 60); // 60 min
+        session(['temp_email_id' => $email->id]);
         
         return response()->json([
             'success' => true,
@@ -150,7 +161,7 @@ class TempMailController extends Controller
      */
     private function getOrCreateTemporaryEmail(Request $request): ?TemporaryEmail
     {
-        $emailId = $request->cookie('temp_email_id');
+        $emailId = $request->cookie('temp_email_id') ?? $request->session()->get('temp_email_id');
         
         // If we have an email ID in cookie, try to find it
         if ($emailId) {
@@ -171,7 +182,7 @@ class TempMailController extends Controller
      */
     private function getTemporaryEmail(Request $request): ?TemporaryEmail
     {
-        $emailId = $request->cookie('temp_email_id');
+        $emailId = $request->cookie('temp_email_id') ?? $request->session()->get('temp_email_id');
         
         if (!$emailId) {
             return null;
@@ -209,8 +220,9 @@ class TempMailController extends Controller
             'expires_at' => Carbon::now()->addHours(10),
         ]);
         
-        // Set cookie
+        // Set cookie and session
         Cookie::queue('temp_email_id', $email->id, 60); // 60 min
+        session(['temp_email_id' => $email->id]);
         
         return $email;
     }
@@ -227,8 +239,9 @@ class TempMailController extends Controller
             // Delete the email and all related data
             $email->delete();
             
-            // Clear the cookie
+            // Clear the cookie and session
             Cookie::queue(Cookie::forget('temp_email_id'));
+            session()->forget('temp_email_id');
             
             return response()->json([
                 'success' => true,
@@ -267,5 +280,79 @@ class TempMailController extends Controller
             'success' => true,
             'is_starred' => $message->is_starred,
         ]);
+    }
+    
+    /**
+     * Search for emails in the inbox.
+     */
+    public function searchInbox(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'query' => 'required|string|min:2|max:100',
+        ]);
+        
+        $query = $validated['query'];
+        $email = $this->getTemporaryEmail($request);
+        
+        if (!$email) {
+            return response()->json(['error' => 'No temporary email found'], 404);
+        }
+        
+        $messages = EmailMessage::where('temp_email_id', $email->id)
+            ->where(function($q) use ($query) {
+                $q->where('subject', 'like', "%{$query}%")
+                  ->orWhere('from', 'like', "%{$query}%")
+                  ->orWhere('body_text', 'like', "%{$query}%");
+            })
+            ->orderBy('received_at', 'desc')
+            ->get();
+        
+        return response()->json([
+            'success' => true,
+            'messages' => $messages,
+            'query' => $query,
+        ]);
+    }
+    
+    /**
+     * Forward an email message to another address.
+     */
+    public function forwardEmail(Request $request, int $id): JsonResponse
+    {
+        $validated = $request->validate([
+            'forward_to' => 'required|email',
+        ]);
+        
+        $forwardTo = $validated['forward_to'];
+        $email = $this->getTemporaryEmail($request);
+        
+        if (!$email) {
+            return response()->json(['error' => 'No temporary email found'], 404);
+        }
+        
+        $message = EmailMessage::where('id', $id)
+            ->where('temp_email_id', $email->id)
+            ->first();
+            
+        if (!$message) {
+            return response()->json(['error' => 'Message not found'], 404);
+        }
+        
+        try {
+            // Send email
+            Mail::to($forwardTo)->send(new ForwardEmail($message));
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Email forwarded successfully to ' . $forwardTo,
+            ]);
+        } catch (\Throwable $e) {
+            Log::error('Email forwarding error: ' . $e->getMessage());
+            
+            return response()->json([
+                'success' => false,
+                'error' => 'Failed to forward email. Please try again later.',
+            ], 500);
+        }
     }
 }

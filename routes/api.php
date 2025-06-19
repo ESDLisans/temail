@@ -20,7 +20,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 // TempMail API Routes
-Route::prefix('v1')->group(function () {
+Route::prefix('v1')->middleware('throttle:tempmail-api')->group(function () {
     // Get emails
     Route::get('/emails', [TempMailApiController::class, 'getEmails']);
     

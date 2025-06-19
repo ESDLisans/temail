@@ -83,8 +83,19 @@
                                     @elseif($setting->type === 'image')
                                         <div class="grid grid-cols-1 gap-4">
                                             @if(!empty($setting->value))
-                                                <div class="mt-2">
-                                                    <img src="{{ Storage::url($setting->value) }}" alt="{{ $setting->key }}" class="max-h-36 object-contain">
+                                                <div class="mt-2 flex items-start space-x-4">
+                                                    <img src="{{ Storage::url($setting->value) }}" alt="{{ $setting->key }}" class="max-h-36 object-contain rounded border border-gray-300 dark:border-gray-600">
+                                                    <!-- Delete Form -->
+                                                    <form action="{{ route('admin.site-settings.delete-image', $setting->key) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this image?');">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded text-red-700 bg-red-100 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                            </svg>
+                                                            Delete
+                                                        </button>
+                                                    </form>
                                                 </div>
                                             @endif
                                             <input type="file" 
@@ -101,6 +112,19 @@
                                             value="{{ old('settings.' . $setting->key, $setting->value) }}" 
                                             class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full h-10 shadow-sm sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-md"
                                             @if($setting->required) required @endif>
+                                    @elseif($setting->type === 'select')
+                                        <select name="settings[{{ $setting->key }}]" 
+                                            id="{{ $setting->key }}" 
+                                            class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md"
+                                            @if($setting->required) required @endif>
+                                            @if(isset($setting->options) && is_array($setting->options))
+                                                @foreach($setting->options as $value => $label)
+                                                    <option value="{{ $value }}" @if(old('settings.' . $setting->key, $setting->value) == $value) selected @endif>
+                                                        {{ $label }}
+                                                    </option>
+                                                @endforeach
+                                            @endif
+                                        </select>
                                     @endif
                                     
                                     @if(!empty($setting->description))

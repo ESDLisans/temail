@@ -28,12 +28,24 @@ class AdSlotController extends Controller
     {
         // Define common ad positions
         $positions = [
-            'header' => 'Header',
-            'sidebar' => 'Sidebar',
-            'footer' => 'Footer',
+            'header' => 'Header AdSense Banner (Leaderboard 728x90)',
+            'sidebar' => 'Sidebar AdSense (Rectangle 300x250)',
+            'footer' => 'Footer AdSense Banner (Leaderboard 728x90)',
+            'popup' => 'Popup AdSense (Timed display - 30 seconds)',
+            'exit_intent' => 'Exit Intent AdSense (Interstitial format)',
+            'sticky_bottom' => 'Sticky Bottom Banner (Fixed bottom)',
+            'floating_button' => 'Floating Action Button (Bottom right)',
+            'mobile_banner' => 'Mobile AdSense Banner (320x100)',
+            'in_content' => 'In-Content AdSense (Native/Fluid)',
+            'blog_top' => 'Header AdSense (Above blog title)',
+            'blog_middle' => 'Blog Middle AdSense (Rectangle)',
+            'blog_bottom' => 'Blog Bottom AdSense (Rectangle)',
+            'email_top' => 'Email Top AdSense (Before content)',
+            'email_middle' => 'Email Middle AdSense (Within content)',
+            'email_bottom' => 'Email Bottom AdSense (After content)',
             'below_inbox' => 'Below Inbox',
             'above_inbox' => 'Above Inbox',
-            'email_view' => 'Email View Page',
+            'email_view' => 'Email View Page (Legacy)',
         ];
         
         return view('admin.ad-slots.create', [
@@ -69,12 +81,24 @@ class AdSlotController extends Controller
     {
         // Define common ad positions
         $positions = [
-            'header' => 'Header',
-            'sidebar' => 'Sidebar',
-            'footer' => 'Footer',
+            'header' => 'Header AdSense Banner (Leaderboard 728x90)',
+            'sidebar' => 'Sidebar AdSense (Rectangle 300x250)',
+            'footer' => 'Footer AdSense Banner (Leaderboard 728x90)',
+            'popup' => 'Popup AdSense (Timed display - 30 seconds)',
+            'exit_intent' => 'Exit Intent AdSense (Interstitial format)',
+            'sticky_bottom' => 'Sticky Bottom Banner (Fixed bottom)',
+            'floating_button' => 'Floating Action Button (Bottom right)',
+            'mobile_banner' => 'Mobile AdSense Banner (320x100)',
+            'in_content' => 'In-Content AdSense (Native/Fluid)',
+            'blog_top' => 'Header AdSense (Above blog title)',
+            'blog_middle' => 'Blog Middle AdSense (Rectangle)',
+            'blog_bottom' => 'Blog Bottom AdSense (Rectangle)',
+            'email_top' => 'Email Top AdSense (Before content)',
+            'email_middle' => 'Email Middle AdSense (Within content)',
+            'email_bottom' => 'Email Bottom AdSense (After content)',
             'below_inbox' => 'Below Inbox',
             'above_inbox' => 'Above Inbox',
-            'email_view' => 'Email View Page',
+            'email_view' => 'Email View Page (Legacy)',
         ];
         
         return view('admin.ad-slots.edit', [

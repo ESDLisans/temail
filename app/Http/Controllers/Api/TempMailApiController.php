@@ -9,6 +9,7 @@ use App\Models\EmailMessage;
 use App\Models\TemporaryEmail;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class TempMailApiController extends Controller
 {
@@ -334,9 +335,12 @@ class TempMailApiController extends Controller
      */
     public function getDomains(): JsonResponse
     {
-        $domains = Domain::where('is_active', true)
-            ->orderBy('name')
-            ->get(['id', 'name']);
+        // Cache domains for 1 hour to improve performance
+        $domains = Cache::remember('available_domains', 3600, function () {
+            return Domain::where('is_active', true)
+                ->orderBy('name')
+                ->get(['id', 'name']);
+        });
 
         return response()->json([
             'success' => true,

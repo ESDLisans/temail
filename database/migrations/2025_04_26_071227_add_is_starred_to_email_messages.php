@@ -12,7 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('email_messages', function (Blueprint $table) {
-            $table->boolean('is_starred')->default(false)->after('is_read');
+            if (!Schema::hasColumn('email_messages', 'is_starred')) {
+                $table->boolean('is_starred')->default(false)->after('is_read');
+            }
         });
     }
 

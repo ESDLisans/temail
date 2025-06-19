@@ -1,66 +1,279 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 📧 TempMail - Professional Temporary Email Service
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A modern, professional temporary email service built with Laravel 11. Create disposable email addresses, receive emails instantly, and manage them with a Gmail-inspired interface.
 
-## About Laravel
+## ✨ Features
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+### 🎯 Core Features
+- **Instant Email Generation** - Create temporary email addresses with one click
+- **Real-time Email Receiving** - Get emails instantly with automatic refresh
+- **Gmail-inspired Interface** - Professional, clean, and intuitive design
+- **Email Management** - Star, search, delete, and organize emails
+- **Forward Emails** - Forward received emails to your real email address
+- **Dark/Light Mode** - Toggle between themes for better user experience
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### 🛡️ Privacy & Security
+- **No Registration Required** - Use instantly without creating accounts
+- **Auto-deletion** - Emails automatically deleted after 10 hours
+- **No Tracking** - Privacy-focused with no user tracking
+- **GDPR Compliant** - Meets European privacy standards
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### 📱 Modern UI/UX
+- **Responsive Design** - Works perfectly on all devices
+- **Professional Typography** - Clean, readable fonts
+- **Smooth Animations** - Polished user interactions
+- **Accessibility** - Screen reader friendly
 
-## Learning Laravel
+### 🔧 Admin Features
+- **Complete Admin Panel** - Manage all aspects of the site
+- **Domain Management** - Add/remove email domains
+- **Blog System** - Built-in blog with rich editor
+- **Site Settings** - Customize appearance, logos, and settings
+- **SMTP Configuration** - Easy email server setup
+- **Menu Management** - Customize navigation menus
+- **Ad Management** - Manage advertisement slots
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### 🚀 Developer Features
+- **RESTful API** - Complete API for integration
+- **Modern Tech Stack** - Laravel 11, Tailwind CSS, Alpine.js
+- **Queue System** - Background job processing
+- **Caching** - Redis support for performance
+- **File Storage** - Local and S3 compatible storage
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+## 🛠️ Tech Stack
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- **Backend**: Laravel 11 (PHP 8.3+)
+- **Frontend**: Tailwind CSS, Alpine.js
+- **Database**: MySQL/PostgreSQL (SQLite for development)
+- **Cache**: Redis
+- **Email**: SMTP + IMAP
+- **Queue**: Redis/Database
+- **Assets**: Vite
 
-## Laravel Sponsors
+## 📋 Requirements
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### Development
+- PHP 8.3+
+- Composer 2.0+
+- Node.js 18+
+- SQLite (included)
 
-### Premium Partners
+### Production
+- PHP 8.3+ (with extensions: BCMath, Ctype, Fileinfo, JSON, Mbstring, OpenSSL, PDO, Tokenizer, XML, IMAP)
+- MySQL 8.0+ or PostgreSQL 13+
+- Redis 6.0+
+- Web server (Nginx/Apache)
+- SSL Certificate
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+## 🚀 Quick Start
 
-## Contributing
+### Development Setup
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url> tempmail
+   cd tempmail
+   ```
 
-## Code of Conduct
+2. **Install dependencies**
+   ```bash
+   composer install
+   npm install
+   ```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+3. **Environment setup**
+   ```bash
+   cp .env.example .env
+   php artisan key:generate
+   ```
 
-## Security Vulnerabilities
+4. **Database setup**
+   ```bash
+   touch database/database.sqlite
+   php artisan migrate
+   php artisan db:seed
+   ```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+5. **Build assets and start**
+   ```bash
+   npm run build
+   php artisan serve
+   ```
 
-## License
+6. **Access the application**
+   - Website: http://localhost:8000
+   - Admin Panel: http://localhost:8000/admin
+   - Login: admin@example.com / password
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### Production Deployment
+
+1. **Use the deployment script**
+   ```bash
+   chmod +x deploy.sh
+   ./deploy.sh
+   ```
+
+2. **Configure environment**
+   ```bash
+   cp env.production.example .env
+   # Edit .env with your production settings
+   ```
+
+3. **Set up web server** (see DEPLOYMENT.md for detailed Nginx/Apache configs)
+
+4. **Configure SSL certificate**
+   ```bash
+   sudo certbot --nginx -d yourdomain.com
+   ```
+
+For detailed deployment instructions, see [DEPLOYMENT.md](DEPLOYMENT.md).
+
+## 📚 Documentation
+
+### API Documentation
+Visit `/api-docs` on your installation for complete API documentation with examples.
+
+### Key Endpoints
+- `GET /api/v1/domains` - Get available domains
+- `GET /api/v1/emails` - Get emails for an address
+- `GET /api/v1/messages/{id}` - Get specific message
+- `POST /generate-email` - Generate new temporary email
+
+### Admin Panel
+Access the admin panel at `/admin` with these features:
+- **Dashboard** - Overview and statistics
+- **Domains** - Manage email domains
+- **Pages** - Create and edit pages
+- **Blog** - Manage blog posts
+- **Site Settings** - Configure appearance and functionality
+- **SMTP Settings** - Email server configuration
+- **Menu Management** - Customize navigation
+- **Ad Slots** - Manage advertisements
+
+## 🎨 Customization
+
+### Themes
+The application supports light and dark themes. Default theme can be changed in:
+```php
+// resources/views/components/temp-mail-header.blade.php
+localStorage.setItem('theme', 'light'); // or 'dark'
+```
+
+### Branding
+Customize your brand through the admin panel:
+- Upload your logo
+- Set site title and description
+- Configure favicon
+- Customize colors and styling
+
+### Email Domains
+Add your own domains through Admin Panel > Domains or via database:
+```php
+Domain::create([
+    'domain' => 'yourdomain.com',
+    'is_active' => true
+]);
+```
+
+## 🔧 Configuration
+
+### Email Settings
+Configure IMAP for receiving emails:
+```env
+IMAP_HOST=your-imap-server.com
+IMAP_PORT=993
+IMAP_USERNAME=your-email@domain.com
+IMAP_PASSWORD=your-password
+IMAP_ENCRYPTION=ssl
+```
+
+### Cache & Performance
+For better performance in production:
+```env
+CACHE_STORE=redis
+SESSION_DRIVER=redis
+QUEUE_CONNECTION=redis
+```
+
+### File Storage
+For file uploads, configure storage:
+```env
+FILESYSTEM_DISK=s3  # or local
+AWS_ACCESS_KEY_ID=your-key
+AWS_SECRET_ACCESS_KEY=your-secret
+AWS_BUCKET=your-bucket
+```
+
+## 🧪 Testing
+
+Run the test suite:
+```bash
+php artisan test
+```
+
+Manual testing checklist:
+- [ ] Email generation works
+- [ ] Email receiving works
+- [ ] Search functionality
+- [ ] Admin panel access
+- [ ] API endpoints respond
+- [ ] Mobile responsiveness
+
+## 📊 Monitoring
+
+### Logs
+Monitor application logs:
+```bash
+tail -f storage/logs/laravel.log
+```
+
+### Performance
+Check queue status:
+```bash
+php artisan queue:monitor
+```
+
+### Backup
+Use the included backup script:
+```bash
+chmod +x backup.sh
+./backup.sh
+```
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Run tests
+5. Submit a pull request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🆘 Support
+
+### Common Issues
+- **500 Error**: Check storage permissions
+- **Emails not receiving**: Verify IMAP settings
+- **Assets not loading**: Run `npm run build`
+- **Database errors**: Check .env configuration
+
+### Getting Help
+1. Check the logs: `storage/logs/laravel.log`
+2. Review configuration: `php artisan about`
+3. Clear caches: `php artisan optimize:clear`
+
+## 🙏 Acknowledgments
+
+- Laravel Framework
+- Tailwind CSS
+- Alpine.js
+- PHP-IMAP Library
+
+---
+
+**TempMail** - Professional temporary email service for modern web applications.
+
+Built with ❤️ using Laravel 11
